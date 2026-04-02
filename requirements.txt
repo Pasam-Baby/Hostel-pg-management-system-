@@ -1,0 +1,10 @@
+Flask
+Flask-WTF
+Flask-Mail
+python-dotenv
+Authlib
+requests
+Werkzeug
+reportlab
+gunicorn
+Waitress
