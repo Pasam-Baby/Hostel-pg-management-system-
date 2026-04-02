@@ -82,9 +82,9 @@ def dashboard():
         my_bookings = 0
 
     try:
-        available_rooms_count = db.execute('SELECT COUNT(*) FROM rooms WHERE available_beds > 0').fetchone()[0]
+        available_beds_count = db.execute('SELECT SUM(available_beds) FROM rooms').fetchone()[0] or 0
     except Exception:
-        available_rooms_count = 0
+        available_beds_count = 0
 
     # Visitor requests counts for this student
     try:
@@ -106,16 +106,17 @@ def dashboard():
         rent_due=rent_due,
         late_fee=late_fee,
         current_day=datetime.now().day,
-            payment_dates=payment_dates,
-            payment_amounts=payment_amounts,
+        payment_dates=payment_dates,
+        payment_amounts=payment_amounts,
+        available_rooms_count=available_beds_count,
+        visits_total=visits_total,
+        visits_pending=visits_pending,
+        payments_sum=payments_sum,
+        student_id=sid,
         # new additions
         rooms=rooms,
         total_rooms=total_rooms,
         my_bookings=my_bookings,
-        available_rooms_count=available_rooms_count,
-        payments_sum=payments_sum,
-        visits_total=visits_total,
-        visits_pending=visits_pending,
         visits_approved=visits_approved,
     )
 

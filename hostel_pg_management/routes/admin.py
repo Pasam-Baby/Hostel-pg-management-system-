@@ -49,7 +49,9 @@ def dashboard():
     total_occupied = occupancy_totals['total_occupied'] or 0
     # Number of rooms (single source of truth)
     total_rooms = db.execute('SELECT COUNT(*) FROM rooms').fetchone()[0] or 0
-    students_count = db.execute('SELECT COUNT(*) FROM students').fetchone()[0]
+    students_count = db.execute('SELECT COUNT(*) FROM students').fetchone()[0] or 0
+    approved_count = db.execute('SELECT COUNT(*) FROM students WHERE approved=1').fetchone()[0] or 0
+    pending_approvals = db.execute('SELECT COUNT(*) FROM students WHERE approved=0').fetchone()[0] or 0
     payments_count = db.execute('SELECT COUNT(*) FROM payments').fetchone()[0]
     complaints_count = db.execute("SELECT COUNT(*) FROM complaints WHERE status = 'Pending'").fetchone()[0]
     # Pending rooms: rooms with status 'Pending' (if any)
@@ -59,7 +61,6 @@ def dashboard():
 
     total_revenue = db.execute("SELECT SUM(amount + COALESCE(late_fee, 0)) FROM payments WHERE status = 'Paid'").fetchone()[0] or 0
     available_rooms = db.execute('SELECT COUNT(*) FROM rooms WHERE available_beds > 0').fetchone()[0]
-    occupied_rooms = db.execute('SELECT COUNT(DISTINCT room_id) FROM students WHERE room_id IS NOT NULL').fetchone()[0]
     available_seats = max(0, total_capacity - total_occupied)
     pending_revenue = max(0, (students_count * 5000) - total_revenue)
 
@@ -90,6 +91,8 @@ def dashboard():
         'admin_dashboard.html',
         rooms_count=total_rooms,
         students_count=students_count,
+        approved_count=approved_count,
+        pending_approvals=pending_approvals,
         payments_count=payments_count,
         complaints_count=complaints_count,
         pending_rooms_count=pending_rooms_count,
@@ -98,7 +101,6 @@ def dashboard():
         total_revenue=total_revenue,
         pending_revenue=pending_revenue,
         available_rooms=available_rooms,
-        occupied_rooms=occupied_rooms,
         total_capacity=total_capacity,
         total_occupied=total_occupied,
         available_seats=available_seats,

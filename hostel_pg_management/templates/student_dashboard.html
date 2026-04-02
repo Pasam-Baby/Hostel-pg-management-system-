@@ -87,7 +87,7 @@
                 </div>
                 <h6 class="text-muted text-uppercase fw-bold small mb-1" style="letter-spacing: 0.5px;">My Room</h6>
                 <h3 class="fw-bold mb-0">{{ room_no | default('Unassigned') }}</h3>
-                <div class="small text-muted mt-2">Rooms available: {{ available_rooms_count | default(0) }}</div>
+                <div class="small text-muted mt-2">Beds available: {{ available_rooms_count | default(0) }}</div>
                 <a href="{{ url_for('student.room') }}" class="stretched-link" aria-label="View room"></a>
             </div>
         </div>
