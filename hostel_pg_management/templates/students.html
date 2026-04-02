@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}Resident Management | HostelApp{% endblock %}
+{% block header %}Resident Management{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)), url('{{ url_for('static', filename='images/students_bg.png') }}');{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="alert alert-info">Manual adding of residents is disabled. Residents will appear here when bookings are accepted.</div>
+    </div>
+
+    <!-- Residents Table -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0 h-100 glass-card">
+            <div class="card-header border-bottom-0 py-4 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-people me-2 text-primary"></i>All Residents</h5>
+                
+                <form action="{{ url_for('admin.students') }}" method="GET" class="d-flex mx-3" style="flex: 1; max-width: 300px;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="input-group input-group-sm border border-secondary border-opacity-25 rounded shadow-sm bg-white">
+                        <input type="text" class="form-control border-0" name="search" placeholder="Search name or email" value="{{ search_q }}">
+                        <button class="btn border-0 text-primary" type="submit"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+                
+                <a href="{{ url_for('report.generate_report', report_type='students') }}" class="btn btn-sm btn-outline-danger border-0 bg-danger bg-opacity-10 text-danger fw-bold rounded-pill shadow-sm">
+                    <i class="bi bi-file-pdf"></i> Export PDF
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light bg-opacity-50">
+                            <tr>
+                                <th scope="col" class="ps-4">Room</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Email</th>
+                                <th scope="col" class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td>
+                                    {% if student.room_no %}
+                                        <div class="fw-semibold">Room {{ student.room_no }}</div>
+                                        <div class="small text-muted">{{ student.total_beds }}-sharing • {{ student.ac_type or 'N/A' }}</div>
+                                    {% else %}
+                                        <div class="fw-semibold">Unassigned</div>
+                                    {% endif %}
+                                </td>
+                                <td class="ps-4 fw-bold text-dark">{{ student.name }}</td>
+                                <td>{{ student.phone }}</td>
+                                <td>{{ student.email }}</td>
+                                <td class="text-end pe-4">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ student.id }}">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </button>
+                                    <form action="{{ url_for('admin.delete_student', student_id=student.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to remove {{ student.name }}? This will permanently delete their record and free their room space.');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade text-start" id="editModal{{ student.id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit {{ student.name }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="{{ url_for('admin.edit_student', student_id=student.id) }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Name</label>
+                                                            <input type="text" class="form-control" name="name" value="{{ student.name }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Email</label>
+                                                            <input type="email" class="form-control" name="email" value="{{ student.email }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Phone</label>
+                                                            <input type="text" class="form-control" name="phone" value="{{ student.phone }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Room</label>
+                                                            <select class="form-select" name="room_id">
+                                                                <option value="">Unassigned</option>
+                                                                {% for r in all_rooms %}
+                                                                    <option value="{{ r.id }}" {% if student.room_no == r.room_no %}selected{% endif %}>Room {{ r.room_no }} - {{ r.occupied }}/{{ r.capacity }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="bi bi-people fs-1 d-block mb-2 text-black-50"></i>
+                                    No residents found in the system.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

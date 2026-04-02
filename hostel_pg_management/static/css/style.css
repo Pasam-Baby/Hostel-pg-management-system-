@@ -1,0 +1,653 @@
+:root {
+  --primary-color: #4f46e5;      /* Indigo-600 */
+  --primary-hover: #4338ca;      /* Indigo-700 */
+  --light-blue: #60a5fa;         /* used for tagline */
+  --secondary-color: #10b981;    /* Emerald-500 */
+  --bg-color: #f3f4f6;           /* Gray-100 */
+  --text-dark: #1f2937;          /* Gray-800 */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+body {
+  overflow-x: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+}
+
+/* Background Gradients & Images */
+.bg-landing {
+  /* Keep only the high-quality background image, no blur or white fade */
+  background-image: url('../images/landing.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: scroll;
+}
+
+.bg-dashboard {
+  /* Clean professional background: image if present, otherwise a simple gradient fallback. No blur or white overlay. */
+  background-image: url('../images/admin-dashboard-bg.svg'), linear-gradient(135deg, #eef2ff 0%, #e6f0ff 100%);
+  /* Fallback solid color if images fail to load */
+  background-color: #eef2ff;
+  background-repeat: no-repeat, no-repeat;
+  background-position: center center, center center;
+  background-size: cover, cover;
+  background-attachment: scroll, scroll;
+}
+
+/* Readable page backgrounds */
+.page-background {
+  /* Reduce default overlay to keep background images clear */
+  --page-overlay: rgba(255, 255, 255, 0.02);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image: var(--page-bg-image, none);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: scroll;
+  border-radius: 1rem;
+}
+
+.page-background::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Very light overlay only to aid readability; kept minimal */
+  background: linear-gradient(180deg, var(--page-overlay), rgba(255, 255, 255, 0.01));
+  z-index: -1;
+}
+
+.page-background > * {
+  position: relative;
+  z-index: 1;
+}
+
+.food-menu-hero {
+  background-image: var(--food-menu-image, none);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 1rem;
+  min-height: 220px;
+}
+
+.bg-student {
+  /* Student background image shown clearly without overlay */
+  background-image: url('../images/student.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: scroll;
+}
+
+/* Glassmorphism Classes */
+.glass-card {
+  /* Minimal translucent card without blur or heavy white fade */
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+}
+
+.glass-nav {
+  /* Keep navbar clear with a very light tint, no blur */
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar styling */
+#sidebar-wrapper {
+  min-height: 100vh;
+  margin-left: -15rem;
+  transition: margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 15rem;
+  background: linear-gradient(180deg, #111827 0%, #1f2937 100%) !important;
+}
+
+#sidebar-wrapper .sidebar-heading {
+  padding: 1rem 1.25rem;
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  background: rgba(255,255,255,0.03);
+}
+
+#sidebar-wrapper .list-group {
+  width: 15rem;
+}
+
+#sidebar-wrapper .list-group-item {
+  border: none;
+  padding: 1rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border-left: 3px solid transparent;
+}
+
+#sidebar-wrapper .list-group-item:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  padding-left: 1.75rem;
+  border-left: 3px solid var(--primary-color);
+}
+
+#page-content-wrapper {
+  min-width: 100vw;
+  transition: min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  margin-left: 0;
+}
+
+@media (min-width: 768px) {
+  #sidebar-wrapper {
+    margin-left: 0;
+  }
+  #page-content-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: -15rem;
+  }
+}
+
+/* Card and component UI */
+.card {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+.card-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-radius: 16px 16px 0 0 !important;
+  font-weight: 600;
+  padding: 1.25rem 1.5rem;
+}
+
+/* Tables */
+.table th {
+  border-top: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  background-color: #f9fafb !important;
+  padding: 1rem 1.5rem;
+}
+
+.table td {
+  vertical-align: middle;
+  padding: 1rem 1.5rem;
+  color: #374151;
+}
+
+.page-heading-readable {
+  color: #122033;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Buttons and Micro-animations */
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4);
+}
+
+.btn-success {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-success:hover {
+  background-color: #059669;
+  border-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
+}
+
+/* Custom button variants requested */
+.btn-admin {
+  background-color: #c53030; /* darker soft red */
+  border-color: #b91c1c;
+  color: #fff;
+}
+.btn-admin:hover {
+  background-color: #9b2222;
+  border-color: #881b1b;
+  box-shadow: 0 6px 18px rgba(197, 48, 48, 0.18);
+  transform: translateY(-2px);
+}
+
+.btn-user {
+  background-color: var(--secondary-color); /* green */
+  border-color: var(--secondary-color);
+  color: #fff;
+}
+.btn-user:hover {
+  background-color: #059669;
+  border-color: #059669;
+  box-shadow: 0 6px 18px rgba(16,185,129,0.18);
+  transform: translateY(-2px);
+}
+
+.btn-visit {
+  /* Orange schedule button */
+  background-color: #f97316; /* orange */
+  border-color: #f97316;
+  color: #fff;
+}
+.btn-visit:hover {
+  background-color: #ea580c;
+  border-color: #ea580c;
+  box-shadow: 0 6px 18px rgba(234,88,12,0.18);
+  transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Dashboard Summary Cards */
+.summary-card {
+  border-radius: 16px;
+  overflow: hidden;
+  border: none !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+}
+
+.summary-card .card-body {
+  position: relative;
+  z-index: 2;
+  padding: 1.5rem;
+}
+
+.summary-icon {
+  position: absolute;
+  right: -5px;
+  bottom: -15px;
+  font-size: 5.5rem;
+  opacity: 0.15;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.summary-card:hover .summary-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.login-container {
+  max-width: 450px;
+  margin: 0 auto;
+  margin-top: 5rem;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.float-animation {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8; 
+}
+/* ===== DARK MODE STYLES ===== */
+body.dark-mode {
+  --bg-color: #1a1a1a;
+  --text-dark: #ffffff;
+  --glass-bg: rgba(30, 30, 30, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+}
+
+body.dark-mode .glass-nav {
+  background: rgba(30, 30, 30, 0.06) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+body.dark-mode .glass-card {
+  background: rgba(30,30,30,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  color: var(--text-dark);
+}
+
+body.dark-mode .card {
+  background-color: #2d2d2d !important;
+  color: var(--text-dark);
+  border-color: #404040;
+}
+
+body.dark-mode .card-header {
+  background-color: #3d3d3d !important;
+  border-color: #404040;
+  color: var(--text-dark);
+}
+
+body.dark-mode .form-control {
+  background-color: #2d2d2d !important;
+  border-color: #404040;
+  color: var(--text-dark);
+}
+
+body.dark-mode .form-control:focus {
+  background-color: #2d2d2d !important;
+  border-color: var(--primary-color);
+  color: var(--text-dark);
+  box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+}
+
+body.dark-mode .form-label {
+  color: var(--text-dark);
+}
+
+body.dark-mode .text-muted {
+  color: #b0b0b0 !important;
+}
+
+/* Mobile / small-screen responsiveness tweaks */
+@media (max-width: 767.98px) {
+  /* Sidebar overlays content and is off-canvas by default */
+  #sidebar-wrapper {
+    position: fixed;
+    left: -15rem;
+    top: 0;
+    height: 100vh;
+    z-index: 1045;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  }
+  #wrapper.toggled #sidebar-wrapper {
+    left: 0;
+  }
+
+  /* Reduce outer padding for narrow viewports */
+  .container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Tighter card spacing and smaller icons on phones */
+  .card .card-body {
+    padding: 1rem;
+  }
+  .card .bi {
+    font-size: 1.6rem !important;
+  }
+  .room-no {
+    font-size: 1.25rem;
+  }
+
+  /* Make action buttons easier to tap */
+  .btn {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  /* Smaller summary icons to avoid overflow */
+  .summary-icon { font-size: 3.2rem; }
+
+  /* Modals should fit well on small screens */
+  .modal-dialog {
+    max-width: 95%;
+    margin: 1.25rem;
+  }
+  .modal-content { border-radius: 12px; }
+
+  /* Ensure room badges wrap and don't overflow */
+  .sharing-type, .ac-type {
+    display: inline-block;
+    white-space: normal;
+    word-break: keep-all;
+  }
+}
+
+/* Very small devices (portrait phones) further adjustments */
+@media (max-width: 420px) {
+  .card .bi { font-size: 1.4rem !important; }
+  .room-no { font-size: 1.1rem; }
+  .price { display: block; font-weight: 600; }
+}
+
+body.dark-mode .navbar-nav .nav-link {
+  color: var(--text-dark) !important;
+}
+
+/* Small purple schedule button variant (used for the single small Schedule Visit) */
+.btn-schedule-small {
+  background-color: #7c3aed; /* purple */
+  border-color: #7c3aed;
+  color: #fff;
+  padding: 0.45rem 1rem;
+  font-size: 0.9rem;
+}
+.btn-schedule-small:hover {
+  background-color: #6d28d9;
+  border-color: #6d28d9;
+  box-shadow: 0 6px 18px rgba(109,40,217,0.18);
+  transform: translateY(-2px);
+}
+
+body.dark-mode .dropdown-menu {
+  background-color: #2d2d2d !important;
+  border-color: #404040;
+}
+
+body.dark-mode .dropdown-item {
+  color: var(--text-dark) !important;
+}
+
+body.dark-mode .dropdown-item:hover {
+  background-color: #404040 !important;
+  color: var(--text-dark) !important;
+}
+
+body.dark-mode .alert {
+  background-color: #2d2d2d !important;
+  border-color: #404040;
+  color: var(--text-dark);
+}
+
+body.dark-mode .table {
+  color: var(--text-dark);
+}
+
+body.dark-mode .table thead th {
+  background-color: #3d3d3d;
+  border-color: #404040;
+  color: var(--text-dark);
+}
+
+body.dark-mode .table tbody tr {
+  background-color: #2d2d2d;
+  border-color: #404040;
+}
+
+body.dark-mode .table tbody tr:hover {
+  background-color: #404040;
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+  background: none;
+  border: none;
+  color: var(--text-dark);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark-mode-toggle:hover {
+  background-color: rgba(79, 70, 229, 0.1);
+  transform: scale(1.1);
+}
+
+body.dark-mode .dark-mode-toggle {
+  color: #ffd700;
+}
+
+/* Enhanced UI Elements */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Slight global hover effect for all buttons (subtle lift and shadow) */
+.btn {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.form-control, .form-select {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+}
+
+/* Professional spacing and shadows */
+.shadow-sm {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Improved typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.fw-semibold {
+  font-weight: 600 !important;
+}
+
+@media (max-width: 767.98px) {
+  .page-background {
+    background-attachment: scroll;
+    border-radius: 0.75rem;
+  }
+}
+
+/* Clear background section class: high-quality image, minimal overlay, no blur */
+.clear-bg-section {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: scroll;
+  position: relative;
+  isolation: isolate;
+}
+.clear-bg-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Very light dark overlay to keep text readable when needed */
+  background: rgba(0,0,0,0.04);
+  z-index: 0;
+  pointer-events: none;
+}
+.clear-bg-section > .container, .clear-bg-section > .container-fluid {
+  position: relative;
+  z-index: 1;
+}
+
+/* Menu link color rules limited to the glass navbar (keeps layout intact) */
+.glass-nav .navbar-nav .nav-link {
+  color: #000000 !important; /* menu links black */
+}
+.glass-nav .navbar-nav .nav-link:hover {
+  color: #ffd700 !important; /* yellow on hover */
+}
+
+/* Tagline light blue */
+.tagline-lightblue {
+  color: var(--light-blue) !important;
+}

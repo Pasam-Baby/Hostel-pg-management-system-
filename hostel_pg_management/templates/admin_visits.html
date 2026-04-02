@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Visit Requests | HostelApp{% endblock %}
+{% block header %}Scheduled Visits{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(0,0,0,0.12), rgba(0,0,0,0.12)), url('{{ url_for('static', filename='images/visit_requests_bg.png') }}'); background-position: center; background-size: cover;{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0 glass-card">
+    <div class="card-header border-bottom-0 py-4 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-calendar-event me-2 text-info"></i>All Visit Requests</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light bg-opacity-50">
+                    <tr>
+                        <th scope="col" class="ps-4">Name</th>
+                        <th scope="col">For</th>
+                        <th scope="col">Room</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Scheduled Date</th>
+                        <th scope="col">Scheduled Time</th>
+                        <th scope="col">Requested At</th>
+                        <th scope="col" class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visit in visits %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-dark">{{ visit.name }}
+                            <div class="small text-muted">Relation: {{ visit.relation if visit.relation else 'N/A' }}</div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ visit.student_name if visit.student_name else (visit.person_to_visit if visit.person_to_visit else 'N/A') }}</div>
+                        </td>
+                        <td>
+                            <div class="text-muted small">{{ visit.room_no if visit.room_no else (visit.for_room_no if visit.for_room_no else '-') }}</div>
+                        </td>
+                        <td>
+                            <div><i class="bi bi-envelope text-muted me-1"></i> {{ visit.email }}</div>
+                            <div class="small"><i class="bi bi-telephone text-muted me-1"></i> {{ visit.phone }}</div>
+                        </td>
+                        <td>
+                            {% if visit.status == 'Accepted' %}
+                                <span class="badge bg-success">Accepted</span>
+                            {% elif visit.status == 'Rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% elif visit.status == 'Approved' %}
+                                <span class="badge bg-success">Accepted</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-semibold text-primary"><i class="bi bi-calendar-day me-1"></i> {{ visit.visit_date }}</td>
+                        <td class="fw-semibold text-primary"><i class="bi bi-clock me-1"></i> {{ visit.visit_time }}</td>
+                        <td class="text-muted small">{{ visit.created_at[:16] if visit.created_at else 'N/A' }}</td>
+                        <td class="text-end pe-4">
+                            {% if visit.status != 'Accepted' %}
+                            <form action="{{ url_for('admin.accept_visit', visit_id=visit.id) }}" method="post" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm btn-success me-1">Accept</button>
+                            </form>
+                            {% endif %}
+                            {% if visit.status != 'Rejected' %}
+                            <form action="{{ url_for('admin.reject_visit', visit_id=visit.id) }}" method="post" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm btn-danger">Reject</button>
+                            </form>
+                            {% endif %}
+                            <form action="{{ url_for('admin.delete_visit', visit_id=visit.id) }}" method="post" class="d-inline ms-1" onsubmit="return confirm('Delete this visit request?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-calendar-x fs-1 d-block mb-2 text-black-50"></i>
+                            No visit requests yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

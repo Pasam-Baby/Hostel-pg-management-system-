@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Payments | HostelApp{% endblock %}
+{% block header %}Payment Management{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)), url('{{ url_for('static', filename='images/payments_bg.png') }}'); background-position: center; background-size: cover;{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Add Payment Form -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-0 glass-card">
+            <div class="card-header border-bottom-0 py-4">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-cash-stack me-2 text-primary"></i>Record New Payment</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin.payments') }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div class="mb-3">
+                        <label for="student_id" class="form-label fw-semibold">Select Student</label>
+                        <select class="form-select" id="student_id" name="student_id" required>
+                            <option value="" disabled selected>Select a student</option>
+                            {% for student in students %}
+                                <option value="{{ student.id }}">{{ student.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="amount" class="form-label fw-semibold">Amount (₹)</label>
+                        <input type="number" class="form-control" id="amount" name="amount" min="1" placeholder="e.g., 5000" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="date" class="form-label fw-semibold">Payment Date</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm" {% if not students %}disabled{% endif %}>
+                        <i class="bi bi-check-circle me-2"></i> Record Payment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payments Table -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 h-100 glass-card">
+            <div class="card-header border-bottom-0 py-4 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-receipt me-2 text-primary"></i>Payment History</h5>
+                <a href="{{ url_for('report.generate_report', report_type='payments') }}" class="btn btn-sm btn-outline-danger border-0 bg-danger bg-opacity-10 text-danger fw-bold rounded-pill shadow-sm">
+                    <i class="bi bi-file-pdf"></i> Export PDF
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light bg-opacity-50">
+                            <tr>
+                                <th scope="col" class="ps-4">Resident</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in payments %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">{{ payment.name }}</td>
+                                <td class="text-success fw-bold">₹{{ payment.amount }}</td>
+                                <td>{{ payment.payment_date }}</td>
+                                <td>
+                                    {% if payment.status == 'Paid' %}
+                                        <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check-circle me-1"></i> Paid</span>
+                                    {% elif payment.status == 'Pending' %}
+                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Pending</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary rounded-pill px-3 py-2">{{ payment.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    {% if payment.status != 'Paid' %}
+                                    <form action="{{ url_for('admin.verify_payment', payment_id=payment.id) }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-success me-2">Verify</button>
+                                    </form>
+                                    {% endif %}
+                                    <form action="{{ url_for('admin.delete_payment', payment_id=payment.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this payment record?');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="bi bi-wallet2 fs-1 d-block mb-2 text-black-50"></i>
+                                    No payment records found.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

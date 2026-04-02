@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}My Room | Girls Hostel{% endblock %}
+{% block header %}Room Details{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('{{ url_for('static', filename='images/rooms_bg.png') }}'); background-position: center; background-size: cover;{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow border-0 mt-4 glass-card">
+            <div class="card-header bg-primary text-white text-center py-4"><h4 class="mb-0 fw-bold">My Room</h4></div>
+            <div class="card-body p-5">
+                {% if room %}
+                <ul class="list-group list-group-flush fs-6">
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Room ID</span><span class="fw-bold">{{ room.id }}</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Room Type</span><span class="fw-bold">{{ room.category if room.category else 'Standard' }}</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Floor</span><span class="fw-bold">{{ room.floor if room.floor is not none else '-' }}</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Room Number</span><span class="fw-bold">{{ room.room_no }}</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Sharing Type</span><span class="fw-bold">{{ room.sharing_type }} Sharing</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>AC Type</span><span class="fw-bold">{{ room.ac_type }}</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Total Beds</span><span class="fw-bold">{{ room.total_beds }}</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Current Occupancy</span><span class="fw-bold">{{ room.occupied }}</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Available Beds</span><span class="fw-bold">{{ room.available_beds }}</span></li>
+                    <li class="list-group-item d-flex justify-content-between py-3"><span>Monthly Rent</span><span class="fw-bold">Rs. {{ room.price }}</span></li>
+                </ul>
+                {% else %}
+                <div class="text-center py-4">
+                    <h5 class="text-muted">No room assigned yet.</h5>
+                    <a href="{{ url_for('booking.book_room') }}" class="btn btn-primary px-4 shadow-sm">Book a Room</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Resident Login | Girls Hostel{% endblock %}
+{% block header %}Resident Portal{% endblock %}
+{% block content %}
+<div class="bg-student min-vh-100 d-flex flex-column justify-content-center" style="margin: -1.5rem;">
+    <div class="login-container mt-0 mb-5">
+        <div class="card shadow-lg border-0 rounded-4 glass-card float-animation" style="animation-duration: 5s;">
+            <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <div class="bg-success bg-opacity-10 rounded-circle d-inline-block p-4 mb-3">
+                    <i class="bi bi-person-badge text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="fw-bold">Resident Portal</h3>
+                <p class="text-muted">Sign in to view your details</p>
+            </div>
+            
+            <form action="{{ url_for('auth.student_login') }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                    <label for="email"><i class="bi bi-envelope me-2"></i>Email Address</label>
+                </div>
+                
+                <div class="form-floating mb-4">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                    <label for="password"><i class="bi bi-key me-2"></i>Password</label>
+                </div>
+                
+                <button type="submit" class="btn btn-success w-100 py-3 fw-bold shadow-sm mb-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                </button>
+                <div class="text-end mb-3">
+                    <a href="{{ url_for('recovery.forgot_password') }}" class="text-decoration-none small">Forgot Password?</a>
+                </div>
+                <div class="text-center mb-3">
+                    <a href="{{ url_for('auth.student_register') }}" class="text-decoration-none small">New Resident? Register for an account</a>
+                </div>
+            </form>
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('home') }}" class="text-decoration-none text-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Booking Success | Girls Hostel{% endblock %}
+{% block header %}Booking Success{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255,255,255,0.88), rgba(255,255,255,0.88)), url('{{ url_for('static', filename='images/landing.png') }}');{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0 mt-4 glass-card">
+            <div class="card-header border-bottom-0 py-4 text-center bg-success text-white rounded-top">
+                <h3 class="mb-0 fw-bold">Booking Submitted Successfully</h3>
+                <p class="mb-0 mt-2">Your room request has been created.</p>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <div class="alert alert-info shadow-sm mb-4">
+                    <div class="fw-bold mb-1">Booking ID</div>
+                    <div class="fs-4 fw-bold text-dark">{{ booking.booking_id }}</div>
+                    <small class="text-muted">Keep this ID safe. It becomes your temporary password after approval.</small>
+                    <p class="mb-0 mt-2"><strong>Room ID:</strong> {{ booking.room_no or booking.room_id or 'Pending Assignment' }}</p>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold text-muted mb-3">Personal Details</h5>
+                        <p class="mb-2"><strong>Name:</strong> {{ booking.name }}</p>
+                        <p class="mb-2"><strong>Phone:</strong> {{ booking.phone }}</p>
+                        <p class="mb-2"><strong>Email:</strong> {{ booking.email }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-bold text-muted mb-3">Room Details</h5>
+                        <p class="mb-2"><strong>Room Number:</strong> {{ booking.room_no or booking.room_id or 'Assigned room' }}</p>
+                        <p class="mb-2"><strong>Sharing Type:</strong> {{ booking.sharing_type }} Sharing</p>
+                        <p class="mb-2"><strong>AC Type:</strong> {{ booking.ac_type }}</p>
+                        <p class="mb-2"><strong>Monthly Rent:</strong> Rs. {{ booking.price|default('0') }}</p>
+                        <p class="mb-2"><strong>Status:</strong> {{ booking.status }}</p>
+                        {% if payment_phone %}
+                        <hr>
+                        <p class="mb-2"><strong>PhonePe Number:</strong> <i class="bi bi-phone me-1"></i> {{ payment_phone }}</p>
+                        {% if payment_qr %}
+                        <div class="mb-2">
+                            <img src="{{ payment_qr }}" alt="Payment QR" style="width:160px;height:160px;" />
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="alert alert-warning shadow-sm mb-4">
+                    <div class="fw-bold mb-1">Next Steps</div>
+                    <ul class="mb-0">
+                        <li>Admin approves or rejects the booking.</li>
+                        <li>After approval, log in with your email and booking ID.</li>
+                        <li>Upload your Aadhar in your profile for verification.</li>
+                    </ul>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{{ url_for('payment.pay_booking', booking_id=booking.booking_id) }}" class="btn btn-success btn-lg px-4">Pay Now</a>
+                    {% if receipt_id %}
+                        <a href="{{ url_for('payment.download_receipt', payment_id=receipt_id) }}" class="btn btn-outline-primary btn-lg px-4">Download Receipt</a>
+                    {% else %}
+                        <button class="btn btn-outline-primary btn-lg px-4" disabled>Download Receipt</button>
+                    {% endif %}
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="window.print()">Print Receipt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

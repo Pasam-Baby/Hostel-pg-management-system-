@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}My Profile | Girls Hostel{% endblock %}
+{% block header %}My Profile{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255,255,255,0.82), rgba(255,255,255,0.82)), url('{{ url_for('static', filename='images/students_bg.png') }}');{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 glass-card mt-4">
+            <div class="card-header py-4 text-center"><h4 class="mb-0 fw-bold">Update Profile Details</h4></div>
+            <div class="card-body">
+                <form action="{{ url_for('student.profile') }}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email Address</label>
+                        <input type="email" class="form-control bg-light" value="{{ student.email }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Name</label>
+                        <input type="text" class="form-control" name="name" value="{{ student.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Phone</label>
+                        <input type="text" class="form-control" name="phone" value="{{ student.phone }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Upload Aadhar</label>
+                        <input type="file" class="form-control" name="id_proof" accept="image/*,.pdf">
+                    </div>
+                    <div class="mb-4">
+                        <span class="badge {% if student.is_verified %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                            {% if student.is_verified %}Aadhar Verified{% else %}Aadhar Pending Verification{% endif %}
+                        </span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

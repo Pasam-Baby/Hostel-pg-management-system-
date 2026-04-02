@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}My Payments | Hostel Management{% endblock %}
+{% block header %}My Payment History{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('{{ url_for('static', filename='images/payments_bg.png') }}'); background-position: center; background-size: cover;{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0 glass-card">
+    <div class="card-header py-3"><h5 class="mb-0 fw-bold">Transaction History</h5></div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Due Date</th>
+                        <th>Late Fee</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.payment_date }}</td>
+                        <td>Rs. {{ payment.amount }}</td>
+                        <td>{{ payment.due_date }}</td>
+                        <td>Rs. {{ payment.late_fee or 0 }}</td>
+                        <td><span class="badge {% if payment.status == 'Paid' %}bg-success{% else %}bg-warning text-dark{% endif %}">{{ payment.status }}</span></td>
+                        <td><a href="{{ url_for('student.download_receipt', payment_id=payment.id) }}" class="btn btn-sm btn-outline-primary">Receipt</a></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center py-5 text-muted">No payment records found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

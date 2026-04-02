@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Booking Detail | HostelApp{% endblock %}
+{% block header %}Booking Details{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <h5 class="card-title">Booking {{ booking.booking_id }}</h5>
+    <div class="mb-3">
+      <strong>Name:</strong> {{ booking.name }}<br>
+      <strong>Email:</strong> {{ booking.email }}<br>
+      <strong>Phone:</strong> {{ booking.phone }}<br>
+      <strong>Room:</strong> {{ booking.room_no or 'N/A' }}<br>
+      <strong>Sharing:</strong> {{ booking.sharing_type }}<br>
+      <strong>AC Type:</strong> {{ booking.ac_type or 'N/A' }}<br>
+      <strong>Price:</strong> ₹{{ booking.price }}<br>
+      <strong>Status:</strong>
+      {% if booking.status == 'Confirmed' %}
+        <span class="badge bg-success">Confirmed</span>
+      {% elif booking.status == 'Rejected' %}
+        <span class="badge bg-danger">Rejected</span>
+      {% else %}
+        <span class="badge bg-warning text-dark">Pending</span>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <h6>Payment</h6>
+      <p><strong>Payment Status:</strong> {{ payment_status }}</p>
+      <p><strong>Total Paid:</strong> ₹{{ total_paid }}</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('booking.admin_booking_action', booking_id=booking.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="d-flex gap-2">
+        <button name="action" value="accept" class="btn btn-success" type="submit" {% if payment_status == 'Not Paid' %}disabled{% endif %}>Accept Booking</button>
+        <button name="action" value="reject" class="btn btn-danger" type="submit">Reject Booking</button>
+        <a href="{{ url_for('admin.bookings') }}" class="btn btn-secondary">Back</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

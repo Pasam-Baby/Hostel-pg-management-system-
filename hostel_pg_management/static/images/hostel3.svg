@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#f7fff6"/>
+  <g transform="translate(120,70)">
+    <rect x="0" y="80" width="640" height="200" rx="12" fill="#ffffff" stroke="#d1fae5"/>
+    <g fill="#dcfce7">
+      <rect x="30" y="110" width="60" height="60"/>
+      <rect x="110" y="110" width="60" height="60"/>
+      <rect x="190" y="110" width="60" height="60"/>
+      <rect x="270" y="110" width="60" height="60"/>
+    </g>
+    <rect x="0" y="0" width="640" height="30" rx="6" fill="#10b981"/>
+    <text x="10" y="20" font-family="Inter, Arial, sans-serif" font-size="16" fill="#ffffff">Common Area</text>
+  </g>
+</svg>

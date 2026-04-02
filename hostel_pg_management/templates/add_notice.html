@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Add Notice | HostelApp{% endblock %}
+{% block header %}Add New Notice{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)), url('{{ url_for('static', filename='images/announcements_bg.png') }}');{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+        <div class="card glass-card shadow border-0">
+            <div class="card-header bg-primary text-white border-0">
+                <h5 class="card-title mb-0 fw-bold">
+                    <i class="bi bi-plus-circle me-2"></i>Add Notice
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" action="{{ url_for('notice.add_notice') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-semibold">Notice Title</label>
+                        <input type="text" class="form-control" id="title" name="title"
+                               placeholder="Enter notice title" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="message" class="form-label fw-semibold">Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="6"
+                                  placeholder="Enter the notice message" required></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>Publish Notice
+                        </button>
+                        <a href="{{ url_for('notice.notice_board') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Notices
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

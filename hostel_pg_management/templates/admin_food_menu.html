@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Manage Food Menu | Admin{% endblock %}
+{% block header %}Weekly Food Menu{% endblock %}
+{% block content %}
+<form method="POST" action="{{ url_for('admin.food_menu') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="card">
+        <div class="card-body">
+            {% for item in menu %}
+            <div class="mb-3">
+                <h6 class="fw-bold">{{ item.day }}</h6>
+                <div class="row g-2">
+                    <div class="col-md-4"><input class="form-control" name="breakfast_{{ loop.index }}" value="{{ item.breakfast }}" placeholder="Breakfast"></div>
+                    <div class="col-md-4"><input class="form-control" name="lunch_{{ loop.index }}" value="{{ item.lunch }}" placeholder="Lunch"></div>
+                    <div class="col-md-4"><input class="form-control" name="dinner_{{ loop.index }}" value="{{ item.dinner }}" placeholder="Dinner"></div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="text-end mt-3">
+                <button class="btn btn-primary">Save Menu</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

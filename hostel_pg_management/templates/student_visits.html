@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}My Visit Requests | HostelApp{% endblock %}
+{% block header %}My Visit Requests{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0 glass-card">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">Submitted Visit Requests</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light bg-opacity-50">
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Visitor</th>
+                        <th>For</th>
+                        <th>Room</th>
+                        <th>Relation</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in visits %}
+                    <tr>
+                        <td>{{ v.visit_date }}</td>
+                        <td>{{ v.visit_time }}</td>
+                        <td>{{ v.name }}</td>
+                        <td>{{ v.for_name or session.get('student_name') }}</td>
+                        <td>{{ v.for_room or '-' }}</td>
+                        <td>{{ v.relation or '-' }}</td>
+                        <td>{{ v.phone }}</td>
+                        <td>
+                            {% if v.status == 'Pending' %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif v.status == 'Approved' %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif v.status == 'Rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ v.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">You have not submitted any visit requests yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

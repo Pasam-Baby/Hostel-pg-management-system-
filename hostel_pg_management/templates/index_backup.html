@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block title %}Hostel & PG Management System{% endblock %}
+{% block header %}Hostel & PG Management System{% endblock %}
+{% block pb_style %}padding-bottom: 0px !important;{% endblock %}
+{% block content %}
+<div class="bg-landing d-flex flex-column justify-content-center align-items-center" style="min-height: 90vh; margin-top: -1.5rem; margin-left: -1.5rem; margin-right: -1.5rem;">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-9 col-lg-8 text-center p-4 p-md-5 rounded-4 glass-card shadow-lg" style="background: rgba(255, 255, 255, 0.84);">
+            <h1 class="display-5 fw-bold mb-3 text-dark">Hostel & PG Management System</h1>
+            <h2 class="h3 fw-semibold mb-3 text-dark">Welcome to Our Girls Hostel</h2>
+            <p class="lead mb-4 text-secondary fw-medium">Safe � Secure � Comfortable Living</p>
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mb-3">
+                <a href="{{ url_for('auth.admin_login') }}" class="btn btn-outline-danger btn-lg px-4 shadow-sm fw-bold">Admin Login</a>
+                <a href="{{ url_for('auth.student_login') }}" class="btn btn-outline-dark btn-lg px-4 shadow-sm fw-bold">User Login</a>
+                <a href="{{ url_for('booking.book_room') }}" class="btn btn-primary btn-lg px-4 shadow-sm fw-bold">Book Room</a>
+            </div>
+            <div class="d-grid justify-content-sm-center">
+                <a href="{{ url_for('auth.schedule_visit') }}" class="btn btn-outline-info px-4 shadow-sm fw-bold text-dark border-2 border-info">Schedule Visit</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="py-5" style="background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('{{ url_for('static', filename='images/rooms_bg.png') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-4">
+        <div class="text-center mb-4">
+            <h2 class="display-6 fw-bold">Room Details</h2>
+            <p class="text-muted fs-5">1, 2, 3 and 4 sharing options in AC and Non-AC categories.</p>
+        </div>
+        <div class="card shadow-sm border-0 glass-card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('booking.available_rooms') }}" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">AC / Non-AC</label>
+                        <select class="form-select" name="ac_type">
+                            <option value="">All</option>
+                            <option value="AC">AC</option>
+                            <option value="Non-AC">Non-AC</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Sharing Type</label>
+                        <select class="form-select" name="sharing_type">
+                            <option value="">All</option>
+                            <option value="1">1 Sharing</option>
+                            <option value="2">2 Sharing</option>
+                            <option value="3">3 Sharing</option>
+                            <option value="4">4 Sharing</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Price Range</label>
+                        <select class="form-select" name="max_price">
+                            <option value="">Any</option>
+                            <option value="6000">Up to Rs. 6000</option>
+                            <option value="7500">Up to Rs. 7500</option>
+                            <option value="9000">Up to Rs. 9000</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-primary">Go</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle bg-white shadow-sm">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Sharing</th>
+                        <th>Type</th>
+                        <th>Total Beds</th>
+                        <th>Available Beds</th>
+                        <th>Monthly Rent</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td>{{ room.room_no }}</td>
+                        <td>{{ room.sharing_type }} Sharing</td>
+                        <td>{{ room.ac_type }}</td>
+                        <td>{{ room.total_beds }}</td>
+                        <td>{{ room.available_beds }}</td>
+                        <td>Rs. {{ room.price }}</td>
+                        <td><span class="badge {% if room.available_beds > 0 %}bg-success{% else %}bg-danger{% endif %}">{{ room.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="py-5 text-dark" style="background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('{{ url_for('static', filename='images/payments_bg.png') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-4">
+        <div class="text-center mb-4">
+            <h2 class="display-6 fw-bold">Price Table</h2>
+            <p class="text-muted fs-5">Monthly rent is shown clearly before booking.</p>
+        </div>
+        <div class="row g-3">
+            {% for item in price_table %}
+            <div class="col-sm-6 col-lg-3">
+                <div class="card h-100 glass-card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold mb-2">{{ item.sharing_type }} Sharing {{ item.ac_type }}</h5>
+                        <div class="fs-4 text-primary fw-bold">Rs. {{ item.price }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="py-5 text-dark" style="background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('{{ url_for('static', filename='images/food_menu_bg.jpg') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-4">
+        <div class="text-center mb-4">
+            <h2 class="display-6 fw-bold">Food Menu</h2>
+            <p class="text-muted fs-5">Weekly menu from Sunday to Saturday.</p>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered text-center bg-white shadow-sm">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Breakfast</th>
+                        <th>Lunch</th>
+                        <th>Dinner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for menu in food_menu %}
+                    <tr>
+                        <td class="fw-bold">{{ menu.day }}</td>
+                        <td>{{ menu.breakfast }}</td>
+                        <td>{{ menu.lunch }}</td>
+                        <td>{{ menu.dinner }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="py-5" style="background: linear-gradient(rgba(255,255,255,0.88), rgba(255,255,255,0.88)), url('{{ url_for('static', filename='images/facilities_bg.jpg') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-4">
+        <div class="text-center mb-4">
+            <h2 class="display-6 fw-bold">Facilities</h2>
+        </div>
+        <div class="row g-3 text-center">
+            <div class="col-6 col-md-4 col-lg"><div class="card glass-card h-100"><div class="card-body fw-bold">WiFi</div></div></div>
+            <div class="col-6 col-md-4 col-lg"><div class="card glass-card h-100"><div class="card-body fw-bold">Laundry</div></div></div>
+            <div class="col-6 col-md-4 col-lg"><div class="card glass-card h-100"><div class="card-body fw-bold">CCTV</div></div></div>
+            <div class="col-6 col-md-4 col-lg"><div class="card glass-card h-100"><div class="card-body fw-bold">Security</div></div></div>
+            <div class="col-6 col-md-4 col-lg"><div class="card glass-card h-100"><div class="card-body fw-bold">Power Backup</div></div></div>
+        </div>
+    </div>
+</div>
+
+<div class="py-5" style="background: linear-gradient(rgba(255,255,255,0.88), rgba(255,255,255,0.88)), url('{{ url_for('static', filename='images/announcements_bg.png') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-4">
+        <div class="text-center mb-4"><h2 class="display-6 fw-bold">Hostel Gallery</h2></div>
+        <div class="row g-4">
+            {% for image in gallery_images %}
+            <div class="col-sm-6 col-lg-3">
+                <div class="card border-0 shadow-sm glass-card h-100 overflow-hidden">
+                    <img src="{{ url_for('static', filename=image) }}" class="img-fluid" alt="Girls hostel image" style="height: 220px; object-fit: cover;">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="bg-dark text-white py-5" style="margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; margin-bottom: -1.5rem;">
+    <div class="container my-4">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <h3 class="fw-bold mb-3">Location & Contact</h3>
+                <p class="mb-2">Phone: +91 98765 43210</p>
+                <p class="mb-2">Email: admissions@girlshostel.com</p>
+                <p class="mb-4">Address: 123 Safe Avenue, Bengaluru, India</p>
+                <h4 class="fw-bold mb-2">Emergency Contact</h4>
+                <p class="mb-0 text-warning fs-5">{{ emergency_number }}</p>
+            </div>
+            <div class="col-lg-7">
+                <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-lg border border-3 border-secondary">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.8285527635677!2d77.5945627!3d12.9715987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

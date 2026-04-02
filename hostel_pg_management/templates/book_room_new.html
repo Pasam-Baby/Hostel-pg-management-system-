@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}Book Room | Girls Hostel{% endblock %}
+{% block header %}Book Room{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('{{ url_for('static', filename='images/rooms_bg.png') }}'); background-position: center; background-size: cover;{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-lg border-0 mt-4 glass-card">
+            <div class="card-header border-bottom-0 py-4 text-center">
+                <h4 class="mb-0 fw-bold">New Booking</h4>
+                <p class="text-muted small mt-2 mb-0">Flow: Admin Login → User Login → Book Room</p>
+            </div>
+            <div class="card-body p-4 p-md-5 pt-0">
+                <form action="{{ url_for('booking.book_room') }}" method="POST" id="bookingForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Name</label>
+                        <input type="text" class="form-control" name="name" required placeholder="Enter your full name">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Phone</label>
+                        <input type="tel" class="form-control" name="phone" required placeholder="Enter your phone number">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" class="form-control" name="email" required placeholder="Enter your email address">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">AC / Non-AC</label>
+                        <select class="form-select" name="ac_type" id="ac_type" required>
+                            <option value="" disabled selected>Select preference</option>
+                            <option value="AC">AC</option>
+                            <option value="Non-AC">Non-AC</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Sharing Type</label>
+                        <select class="form-select" name="sharing_type" id="sharing_type" required>
+                            <option value="" disabled selected>Select sharing type</option>
+                            <option value="1">1 Sharing</option>
+                            <option value="2">2 Sharing</option>
+                            <option value="3">3 Sharing</option>
+                            <option value="4">4 Sharing</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Dynamic Rent Preview Box -->
+                    <div class="alert alert-info shadow-sm mb-4" id="rent_preview_box" style="display: none !important;">
+                        <div class="fw-bold">Monthly Rent</div>
+                        <div class="fs-4 fw-bold text-dark">₹<span id="monthly_amount">0</span></div>
+                        <div class="small text-muted">This amount is shown before booking and used for payment reminders.</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">
+                        <i class="bi bi-check2-circle me-2"></i>Confirm Booking
+                    </button>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">After admin approval, you can log in using your email. Your temporary password is your booking ID.</small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 glass-card mt-4 h-100">
+            <div class="card-header py-3">
+                <h5 class="mb-0 fw-bold">Price Table</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr><th>Type</th><th>Rent</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1 Sharing AC</td><td>₹9,000</td></tr>
+                            <tr><td>1 Sharing Non-AC</td><td>₹6,000</td></tr>
+                            <tr><td>2 Sharing AC</td><td>₹7,500</td></tr>
+                            <tr><td>2 Sharing Non-AC</td><td>₹4,500</td></tr>
+                            <tr><td>3 Sharing AC</td><td>₹6,500</td></tr>
+                            <tr><td>3 Sharing Non-AC</td><td>₹3,500</td></tr>
+                            <tr><td>4 Sharing AC</td><td>₹6,000</td></tr>
+                            <tr><td>4 Sharing Non-AC</td><td>₹3,000</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const acType = document.getElementById('ac_type');
+    const sharingType = document.getElementById('sharing_type');
+    const rentPreview = document.getElementById('rent_preview_box');
+    const amountDisplay = document.getElementById('monthly_amount');
+
+    // Logic for calculating the monthly rent
+    function calculateRent() {
+        const ac = acType.value;
+        const st = parseInt(sharingType.value);
+        
+        if (ac && st) {
+            let basePrice = 0;
+            
+            if (ac === 'AC') {
+                if (st === 1) basePrice = 9000;
+                else if (st === 2) basePrice = 7500;
+                else if (st === 3) basePrice = 6500;
+                else if (st === 4) basePrice = 6000;
+            } else if (ac === 'Non-AC') {
+                if (st === 1) basePrice = 6000;
+                else if (st === 2) basePrice = 4500;
+                else if (st === 3) basePrice = 3500;
+                else if (st === 4) basePrice = 3000;
+            }
+            
+            amountDisplay.textContent = basePrice.toLocaleString('en-IN');
+            rentPreview.style.setProperty('display', 'block', 'important');
+        } else {
+            rentPreview.style.setProperty('display', 'none', 'important');
+        }
+    }
+
+    acType.addEventListener('change', calculateRent);
+    sharingType.addEventListener('change', calculateRent);
+});
+</script>
+{% endblock %}

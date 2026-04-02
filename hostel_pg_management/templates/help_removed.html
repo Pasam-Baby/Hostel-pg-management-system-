@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Help & Support Removed{% endblock %}
+{% block header %}Help & Support{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0 glass-card">
+    <div class="card-body text-center">
+        <h5 class="fw-bold mb-3">Help & Support</h5>
+        <p class="text-muted">This section has been removed. For urgent assistance, please contact the administration.</p>
+        <a href="{{ url_for('admin.settings') }}" class="btn btn-outline-primary">View Emergency Contact</a>
+    </div>
+</div>
+{% endblock %}

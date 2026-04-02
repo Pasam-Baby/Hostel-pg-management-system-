@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Cleanup Sample Rooms | Admin{% endblock %}
+{% block header %}Cleanup Sample Rooms{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h5 class="fw-bold">Candidate Sample Rooms</h5>
+            <p class="text-muted">Only rooms with no assigned residents (occupied = 0) are listed. Select rooms to remove and click "Delete Selected".</p>
+            {% if candidates %}
+            <form method="POST">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Room No</th>
+                            <th>Sharing</th>
+                            <th>AC</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in candidates %}
+                        <tr>
+                            <td><input type="checkbox" name="room_id" value="{{ r.id }}"></td>
+                            <td>{{ r.room_no }}</td>
+                            <td>{{ r.sharing_type }}</td>
+                            <td>{{ r.ac_type }}</td>
+                            <td>₹{{ r.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="d-flex gap-2">
+                    <a href="/admin/rooms" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Delete selected rooms? This cannot be undone.')">Delete Selected</button>
+                </div>
+            </form>
+            {% else %}
+            <div class="text-center py-4">
+                <p class="text-muted">No candidate sample rooms found (none empty or none exist).</p>
+                <a href="/admin/rooms" class="btn btn-outline-primary">Back to Rooms</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

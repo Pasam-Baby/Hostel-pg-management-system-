@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard | HostelApp{% endblock %}
+{% block header %}Dashboard Overview{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)), url('{{ url_for('static', filename='images/admin-dashboard-bg.svg') }}');{% endblock %}
+
+{% block content %}
+<!-- Top Analytics: Active Students, Available Rooms, Pending Complaints, Total Revenue -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card summary-card shadow-sm h-100 border-0">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase fw-bold mb-2">Active Residents</h6>
+                <h3 class="fw-bold mb-0">{{ students_count or 0 }}</h3>
+                <div class="small text-muted mt-1"><i class="bi bi-people-fill me-1"></i> currently enrolled</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card summary-card shadow-sm h-100 border-0">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase fw-bold mb-2">Available Rooms</h6>
+                <h3 class="fw-bold mb-0">{{ available_rooms or 0 }}</h3>
+                <div class="small text-muted mt-1"><i class="bi bi-door-open me-1"></i> rooms with free beds</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card summary-card shadow-sm h-100 border-0">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase fw-bold mb-2">Pending Complaints</h6>
+                <h3 class="fw-bold mb-0">{{ complaints_count or 0 }}</h3>
+                <div class="small text-muted mt-1"><i class="bi bi-exclamation-triangle me-1"></i> require attention</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card summary-card shadow-sm h-100 border-0">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase fw-bold mb-2">Total Revenue</h6>
+                <h3 class="fw-bold mb-0">₹{{ total_revenue or 0 }}</h3>
+                <div class="small text-muted mt-1"><i class="bi bi-currency-dollar me-1"></i> collected</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts row -->
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase fw-bold mb-3">Monthly Revenue (last 6 months)</h6>
+                <canvas id="revenueChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase fw-bold mb-3">Occupancy</h6>
+                <canvas id="occupancyChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick rooms list (compact) -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase fw-bold mb-3">Recent Rooms</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead><tr><th>Room</th><th>Type</th><th>Sharing</th><th>Available Beds</th><th>Price</th></tr></thead>
+                        <tbody>
+                        {% for r in rooms[:10] %}
+                        <tr>
+                            <td>{{ r.room_no }}</td>
+                            <td>{{ r.ac_type }}</td>
+                            <td>{{ r.sharing_type }}</td>
+                            <td>{{ r.available_beds }}</td>
+                            <td>₹{{ r.price }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- Load Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Revenue chart data from server
+    const revenueLabels = {{ monthly_labels|tojson }} || [];
+    const revenueData = {{ monthly_amounts|tojson }} || [];
+
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Revenue',
+                data: revenueData,
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13,110,253,0.08)',
+                fill: true,
+                tension: 0.3,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Occupancy pie/donut chart
+    const occCtx = document.getElementById('occupancyChart').getContext('2d');
+    const occupied = {{ total_occupied or 0 }};
+    const availableSeats = {{ available_seats or 0 }};
+    new Chart(occCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Occupied beds','Available beds'],
+            datasets: [{
+                data: [occupied, availableSeats],
+                backgroundColor: ['#dc3545','#198754'],
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% block title %}Welcome | Girls Hostel{% endblock %}
+{% block header %}Hostel & PG Management System{% endblock %}
+{% block pb_style %}padding-bottom: 0px !important;{% endblock %}
+{% block content %}
+
+<!-- HERO SECTION (Existing BG Kept) -->
+<div class="bg-landing d-flex flex-column justify-content-center align-items-center" style="min-height: 90vh; margin-top: -1.5rem; margin-left: -1.5rem; margin-right: -1.5rem;">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-8 col-lg-7 text-center p-5 rounded-4 glass-card float-animation shadow-lg" style="background: rgba(255, 255, 255, 0.06);">
+            <div class="mb-4">
+                <i class="bi bi-suit-heart-fill text-danger" style="font-size: 4rem;"></i>
+            </div>
+            <h1 class="display-4 fw-bold mb-3 text-dark" style="letter-spacing: -1px;">Welcome to Our Girls Hostel</h1>
+            <p class="lead mb-5 text-secondary px-md-4 fw-medium">Safe • Secure • Comfortable Living</p>
+        
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mb-3">
+                <a href="{{ url_for('auth.admin_login') }}" class="btn btn-outline-danger btn-lg px-4 shadow-sm fw-bold">
+                    <i class="bi bi-shield-lock me-2"></i> Admin Login
+                </a>
+                <a href="{{ url_for('auth.student_login') }}" class="btn btn-outline-dark btn-lg px-4 shadow-sm fw-bold">
+                    <i class="bi bi-person me-2"></i> Resident Login
+                </a>
+                <a href="{{ url_for('booking.book_room') }}" class="btn btn-primary btn-lg px-4 shadow-sm fw-bold">
+                    <i class="bi bi-building-add me-2"></i> Book Room
+                </a>
+            </div>
+            <div class="d-grid justify-content-sm-center">
+                <a href="{{ url_for('auth.schedule_visit') }}" class="btn btn-outline-info px-4 shadow-sm fw-bold text-dark border-2 border-info">
+                    <i class="bi bi-calendar-check me-2"></i> Schedule a Visit
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ROOM DETAILS SECTION -->
+<div class="py-5" style="background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('{{ url_for('static', filename='images/rooms_bg.png') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold"><i class="bi bi-door-open text-primary me-2"></i>Room Details</h2>
+            <p class="text-muted fs-5">Choose from our comfortable AC and Non-AC configurations.</p>
+        </div>
+        
+        <!-- PRICE TABLE -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <div class="card shadow-lg border-0 rounded-4 glass-card overflow-hidden">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h4 class="mb-0 fw-bold">Monthly Rent Prices</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered mb-0 text-center align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="py-3 fs-5">Sharing Type</th>
+                                    <th class="py-3 fs-5">AC Rooms</th>
+                                    <th class="py-3 fs-5">Non-AC Rooms</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <tr>
+                                    <td class="fw-bold py-3">1 Sharing</td>
+                                    <td class="py-3 fs-5 fw-bold text-primary">₹9,000</td>
+                                    <td class="py-3 fs-5 fw-bold">₹6,000</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold py-3">2 Sharing</td>
+                                    <td class="py-3 fs-5 fw-bold text-primary">₹7,500</td>
+                                    <td class="py-3 fs-5 fw-bold">₹4,500</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold py-3">3 Sharing</td>
+                                    <td class="py-3 fs-5 fw-bold text-primary">₹6,500</td>
+                                    <td class="py-3 fs-5 fw-bold">₹3,500</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold py-3">4 Sharing</td>
+                                    <td class="py-3 fs-5 fw-bold text-primary">₹6,000</td>
+                                    <td class="py-3 fs-5 fw-bold">₹3,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ROOM CARDS -->
+        <div class="row g-4 justify-content-center">
+            {% for i in range(1, 5) %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card shadow-sm border-0 h-100 rounded-4 transition-hover">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-people-fill text-primary" style="font-size: 2.5rem;"></i>
+                        <h4 class="fw-bold mt-3">{{ i }} Sharing</h4>
+                        <hr class="w-50 mx-auto text-primary">
+                        <p class="text-muted mb-1">Available in AC / Non-AC</p>
+                        <p class="text-secondary small">Spacious, fully furnished beds with attached modern washrooms.</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- FOOD MENU SECTION -->
+<div class="py-5 text-dark" style="background: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), url('{{ url_for('static', filename='images/food_menu_bg.jpg') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold"><i class="bi bi-cup-hot-fill text-danger me-2"></i>Weekly Food Menu</h2>
+            <p class="text-muted fs-5">Hygienic, nutritious, and delicious home-style meals.</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-lg border-0 rounded-4 glass-card overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered mb-0 text-center align-middle">
+                            <thead class="table-danger border-danger">
+                                <tr>
+                                    <th class="py-3 fs-5">Day</th>
+                                    <th class="py-3 fs-5">Breakfast (Tiffin)</th>
+                                    <th class="py-3 fs-5">Lunch</th>
+                                    <th class="py-3 fs-5">Dinner</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <tr><td class="fw-bold py-3 text-danger">Sunday</td><td>Idli & Sambar</td><td>Rice, Dal, Veg Curry</td><td>Chapati, Paneer Masala</td></tr>
+                                <tr><td class="fw-bold py-3 text-danger">Monday</td><td>Dosa & Chutney</td><td>Rice, Rajma, Salad</td><td>Jeera Rice, Egg Curry</td></tr>
+                                <tr><td class="fw-bold py-3 text-danger">Tuesday</td><td>Poha & Jalebi</td><td>Rice, Chole, Puri</td><td>Chapati, Mixed Veg</td></tr>
+                                <tr><td class="fw-bold py-3 text-danger">Wednesday</td><td>Upma & Chutney</td><td>Lemon Rice, Curd</td><td>Paratha, Aloo Gobi</td></tr>
+                                <tr><td class="fw-bold py-3 text-danger">Thursday</td><td>Aloo Paratha</td><td>Rice, Sambar, Fry</td><td>Chapati, Dal Tadka</td></tr>
+                                <tr><td class="fw-bold py-3 text-danger">Friday</td><td>Puri Bhaji</td><td>Veg Biryani, Raita</td><td>Noodles, Gobi Manchurian</td></tr>
+                                <tr><td class="fw-bold py-3 text-danger">Saturday</td><td>Masala Dosa</td><td>Chicken/Paneer Biryani</td><td>Light Meal / Khichdi</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FACILITIES SECTION -->
+<div class="py-5" style="background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('{{ url_for('static', filename='images/facilities_bg.jpg') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold"><i class="bi bi-stars text-warning me-2"></i>Premium Facilities</h2>
+            <p class="text-muted fs-5">Everything you need for a comfortable stay.</p>
+        </div>
+        <div class="row g-4 text-center justify-content-center">
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-4 bg-white rounded-circle shadow border border-2 border-warning mx-auto d-flex flex-column justify-content-center align-items-center" style="width: 140px; height: 140px;">
+                    <i class="bi bi-wifi fs-1 text-primary"></i>
+                    <span class="mt-2 fw-bold">Free WiFi</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-4 bg-white rounded-circle shadow border border-2 border-warning mx-auto d-flex flex-column justify-content-center align-items-center" style="width: 140px; height: 140px;">
+                    <i class="bi bi-basket-fill fs-1 text-secondary"></i>
+                    <span class="mt-2 fw-bold">Laundry</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-4 bg-white rounded-circle shadow border border-2 border-warning mx-auto d-flex flex-column justify-content-center align-items-center" style="width: 140px; height: 140px;">
+                    <i class="bi bi-camera-video-fill fs-1 text-danger"></i>
+                    <span class="mt-2 fw-bold">24/7 CCTV</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-4 bg-white rounded-circle shadow border border-2 border-warning mx-auto d-flex flex-column justify-content-center align-items-center" style="width: 140px; height: 140px;">
+                    <i class="bi bi-shield-shaded fs-1 text-success"></i>
+                    <span class="mt-2 fw-bold">Security guards</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="p-4 bg-white rounded-circle shadow border border-2 border-warning mx-auto d-flex flex-column justify-content-center align-items-center" style="width: 140px; height: 140px;">
+                    <i class="bi bi-lightning-charge-fill fs-1 text-warning"></i>
+                    <span class="mt-2 fw-bold">Power Backup</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- HOSTEL GALLERY SECTION -->
+<div class="py-5" style="background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('{{ url_for('static', filename='images/gallery_bg.jpg') }}') center/cover; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold"><i class="bi bi-images text-info me-2"></i>Hostel Gallery</h2>
+            <p class="text-muted fs-5">Take a virtual tour of our beautiful hostel.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                    <img src="{{ url_for('static', filename='images/hostel1.jpg') }}" class="card-img-top" alt="Hostel Room" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Spacious Rooms</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                    <img src="{{ url_for('static', filename='images/hostel2.jpg') }}" class="card-img-top" alt="Hostel Mess" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Modern Mess</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                    <img src="{{ url_for('static', filename='images/hostel3.jpg') }}" class="card-img-top" alt="Hostel Common Area" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Common Area</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LOCATION & CONTACT SECTION -->
+<div class="bg-dark text-white py-5" style="margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; margin-bottom: -1.5rem;">
+    <div class="container my-4">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-4"><i class="bi bi-telephone-fill text-info me-2"></i>Contact Us</h3>
+                <p class="fs-5 mb-3"><i class="bi bi-envelope fs-4 text-warning me-3"></i> admissions@girlshostel.com</p>
+                <p class="fs-5 mb-3"><i class="bi bi-telephone fs-4 text-warning me-3"></i> +91 98765 43210</p>
+                <p class="fs-5 mb-5"><i class="bi bi-geo-alt fs-4 text-warning me-3"></i> 123 Safe Avenue, Tech City, India 400001</p>
+                
+                <!-- EMERGENCY CONTACT -->
+                <div class="alert alert-danger border-2 border-danger">
+                    <h4 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Emergency Contact</h4>
+                    <p class="fs-5 mb-0"><i class="bi bi-telephone-fill me-2"></i> +91 98765 43211 (24/7)</p>
+                </div>
+                
+                <h3 class="fw-bold mb-3"><i class="bi bi-clock-fill text-info me-2"></i>Visiting Hours</h3>
+                <p class="fs-5 text-light opacity-75">Monday - Sunday: 10:00 AM to 6:00 PM</p>
+            </div>
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-4"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Our Location</h3>
+                <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-lg border border-3 border-secondary">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.8285527635677!2d77.5945627!3d12.9715987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

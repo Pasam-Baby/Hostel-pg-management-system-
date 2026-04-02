@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#f5f7fb"/>
+  <g transform="translate(120,70)">
+    <rect x="0" y="60" width="200" height="240" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+    <rect x="220" y="30" width="200" height="270" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+    <rect x="440" y="90" width="200" height="210" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+    <g fill="#e6eefb">
+      <rect x="20" y="80" width="40" height="40"/>
+      <rect x="80" y="80" width="40" height="40"/>
+      <rect x="140" y="80" width="40" height="40"/>
+
+      <rect x="240" y="50" width="40" height="40"/>
+      <rect x="300" y="50" width="40" height="40"/>
+      <rect x="360" y="50" width="40" height="40"/>
+
+      <rect x="460" y="110" width="40" height="40"/>
+      <rect x="520" y="110" width="40" height="40"/>
+      <rect x="580" y="110" width="40" height="40"/>
+    </g>
+    <rect x="0" y="0" width="640" height="30" rx="6" fill="#0ea5a4"/>
+    <text x="10" y="20" font-family="Inter, Arial, sans-serif" font-size="16" fill="#ffffff">Hostel View</text>
+  </g>
+</svg>

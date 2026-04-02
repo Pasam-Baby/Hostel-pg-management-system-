@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% block title %}Resident Dashboard | Girls Hostel{% endblock %}
+{% block header %}Welcome, {{ student_name }}!{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)), url('{{ url_for('static', filename='images/student.png') }}');{% endblock %}
+{% block content %}
+{% if rent_due %}
+<div class="alert {{ 'alert-danger shadow-lg border-danger' if late_fee > 0 else 'alert-warning shadow' }} d-flex align-items-center mb-4 rounded-3" role="alert">
+    <i class="bi {{ 'bi-exclamation-octagon-fill text-danger' if late_fee > 0 else 'bi-exclamation-triangle-fill text-warning' }} flex-shrink-0 me-3 display-6"></i>
+    <div>
+        <h5 class="alert-heading fw-bold mb-1 text-dark">
+            {% if late_fee > 0 %}
+               <span class="text-danger">Immediate Action Required: Overdue Rent!</span>
+            {% else %}
+               Monthly Rent Reminder
+            {% endif %}
+        </h5>
+        <p class="mb-0 text-dark">
+            You have not yet paid your hostel rent for the current month.
+            {% if late_fee > 0 %}
+            <br><strong>Note:</strong> A late fee penalty of <strong class="text-danger fw-bold">₹{{ late_fee }}</strong> has been applied (Rs. 50 per day) because the 5th of the month has passed. Please clear your dues immediately.
+            {% else %}
+            Please ensure you pay before the 5th of this month to avoid a <strong>₹50 per day</strong> late fee penalty.
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endif %}
+<div class="row g-4 mb-4 user-dashboard-cards">
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card shadow-sm h-100 udc-blue">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title mb-1">Total Payments</h6>
+                        <div class="card-value fw-bold">₹{{ payments_sum | default(0) }}</div>
+                        <div class="small text-muted mt-1">Transactions: {{ payment_count | default(0) }}</div>
+                    </div>
+                    <i class="bi bi-cash-stack fs-2 icon text-primary"></i>
+                </div>
+                <a href="{{ url_for('student.payments') }}" class="stretched-link" aria-label="View payments"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card shadow-sm h-100 udc-green">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title mb-1">My Complaints</h6>
+                        <div class="card-value fw-bold">{{ total_complaints | default(0) }}</div>
+                        <div class="small text-muted mt-1">Resolved: {{ resolved_complaints | default(0) }}</div>
+                    </div>
+                    <i class="bi bi-exclamation-circle fs-2 icon text-success"></i>
+                </div>
+                <a href="{{ url_for('student.complaints') }}" class="stretched-link" aria-label="View complaints"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card shadow-sm h-100 udc-orange">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title mb-1">Visitor Requests</h6>
+                        <div class="card-value fw-bold">{{ visits_total | default(0) }}</div>
+                        <div class="small text-muted mt-1">Pending: {{ visits_pending | default(0) }}</div>
+                    </div>
+                    <i class="bi bi-calendar-event fs-2 icon text-warning"></i>
+                </div>
+                <a href="{{ url_for('student.visits') }}" class="stretched-link" aria-label="View visits"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card shadow-sm h-100 udc-muted">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title mb-1">Room Details</h6>
+                        <div class="card-value fw-bold">{{ room_no | default('Unassigned') }}</div>
+                        <div class="small text-muted mt-1">Available rooms: {{ available_rooms_count | default(0) }}</div>
+                    </div>
+                    <i class="bi bi-door-open fs-2 icon text-secondary"></i>
+                </div>
+                <a href="{{ url_for('student.room') }}" class="stretched-link" aria-label="View room"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Graphs Section -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card glass-card h-100 shadow-sm border-0 overflow-hidden">
+            <div class="card-body p-4">
+                <h6 class="text-muted text-uppercase fw-bold mb-4 small" style="letter-spacing: 1px;">
+                    <i class="bi bi-graph-up me-2 text-primary"></i>Payment History
+                </h6>
+                <div style="height: 220px;">
+                    <canvas id="paymentHistoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card glass-card h-100 shadow-sm border-0 overflow-hidden">
+            <div class="card-body p-4">
+                <h6 class="text-muted text-uppercase fw-bold mb-4 small" style="letter-spacing: 1px;">
+                    <i class="bi bi-pie-chart me-2 text-success"></i>Complaint Status
+                </h6>
+                <div style="height: 220px;">
+                    <canvas id="complaintStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notifications and Additional Info -->
+<div class="row g-4 mt-2 mb-5">
+    <div class="col-lg-8">
+        <div class="card glass-card h-100 shadow-sm border-0 overflow-hidden">
+            <div class="card-header border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-bell me-2 text-info"></i>Notifications</h5>
+                {% if notifications %}
+                <button id="deleteAllNotifs" class="btn btn-sm btn-link text-danger text-decoration-none fw-bold p-0">
+                    <i class="bi bi-trash-fill me-1"></i>Delete All
+                </button>
+                {% endif %}
+            </div>
+            <div class="card-body pt-3">
+                {% if notifications %}
+                <div class="list-group list-group-flush border-top-0">
+                    {% for n in notifications %}
+                    <div class="list-group-item bg-transparent border-start-0 border-end-0 px-0 py-3 d-flex align-items-start notification-item">
+                        <div class="bg-info bg-opacity-10 text-info rounded-circle p-2 me-3">
+                            <i class="bi bi-info-circle"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <p class="mb-1 text-dark fw-semibold small">{{ n.message }}</p>
+                                <span class="text-muted" style="font-size: 0.7rem;">{{ n.created_at }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-bell-slash text-muted opacity-25 mb-3 d-block" style="font-size: 3rem;"></i>
+                    <p class="text-muted small mb-0">You're all caught up! No new notifications.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card summary-card bg-dark bg-gradient text-white shadow-sm h-100 border-0">
+            <div class="card-body d-flex flex-column justify-content-center p-4">
+                <h6 class="text-white-50 text-uppercase fw-bold mb-3" style="letter-spacing: 1px;">Status Update</h6>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-success rounded-circle me-3" style="width: 12px; height: 12px; animation: pulse 1.5s infinite;"></div>
+                    <span class="fw-bold">Active Resident</span>
+                </div>
+                <p class="small text-white-50 mb-4 lh-lg">Maintain your profile and keep your records updated for a better experience at Girls Hostel.</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('student.profile') }}" class="btn btn-outline-light w-100">Update Profile</a>
+                </div>
+                <style>
+                    @keyframes pulse {
+                        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+                        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+                        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+                    }
+                    .notification-item:hover { background: rgba(59, 130, 246, 0.05) !important; transition: background 0.3s; }
+                </style>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Notification Delete All Action (kept minimal)
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load Chart.js from CDN
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+        script.onload = function() {
+            // Payment History Chart
+            const payDates = {{ payment_dates | tojson }} || [];
+            const payAmounts = {{ payment_amounts | tojson }} || [];
+            
+            if (document.getElementById('paymentHistoryChart')) {
+                const payCtx = document.getElementById('paymentHistoryChart').getContext('2d');
+                new Chart(payCtx, {
+                    type: 'line',
+                    data: {
+                        labels: payDates,
+                        datasets: [{
+                            label: 'Amount Paid (₹)',
+                            data: payAmounts,
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13,110,253,0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#0d6efd',
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { 
+                            y: { beginAtZero: true, grid: { display: false } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // Complaint Status Chart
+            const totalComp = {{ total_complaints | default(0) }};
+            const resComp = {{ resolved_complaints | default(0) }};
+            const pendComp = Math.max(0, totalComp - resComp);
+
+            if (document.getElementById('complaintStatusChart')) {
+                const compCtx = document.getElementById('complaintStatusChart').getContext('2d');
+                new Chart(compCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Resolved', 'Pending'],
+                        datasets: [{
+                            data: [resComp, pendComp],
+                            backgroundColor: ['#198754', '#f59e0b'],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
+        };
+        document.head.appendChild(script);
+
+        const deleteBtn = document.getElementById('deleteAllNotifs');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete all notifications?')) {
+                    fetch('/student/notifications/clear', { 
+                        method: 'POST',
+                        headers: { 
+                            'X-CSRFToken': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json().catch(()=>({})))
+                    .then(data => { location.reload(); })
+                    .catch(err => { console.error('Error clearing notifications:', err); location.reload(); });
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+/* New user dashboard cards (soft colors) */
+.user-dashboard-cards { margin-top: 1.5rem; }
+.user-dashboard-cards .card { border-radius: .75rem; }
+.udc-blue { background: linear-gradient(90deg, rgba(13,110,253,0.08), rgba(13,110,253,0.03)); }
+.udc-green { background: linear-gradient(90deg, rgba(16,185,129,0.08), rgba(16,185,129,0.03)); }
+.udc-orange { background: linear-gradient(90deg, rgba(245,158,11,0.08), rgba(245,158,11,0.03)); }
+.udc-muted { background: linear-gradient(90deg, rgba(108,117,125,0.05), rgba(108,117,125,0.02)); }
+.user-dashboard-cards .card .icon { font-size: 1.6rem; opacity: 0.95; }
+.user-dashboard-cards .card-title { font-size: .95rem; font-weight:700; }
+.user-dashboard-cards .card-value { font-size: 1.4rem; font-weight:700; }
+
+/* Larger summary icons and values for single-user dashboard */
+.summary-icon { position: absolute; top: 1rem; right: 1rem; font-size: 2.4rem; opacity: 0.95; }
+.summary-card .display-5 { font-size: 2.4rem; }
+.summary-card .card-body { position: relative; padding: 1.5rem; }
+
+.glass-card .card-header i { font-size: 1.25rem; }
+
+/* Rooms list (view-only) */
+.user-rooms-list { margin-top: 1.5rem; }
+.user-rooms-list .room-item { padding: .6rem; border: 1px solid rgba(0,0,0,0.04); border-radius:.55rem; }
+.user-rooms-list .room-item + .room-item { margin-top: .6rem; }
+.room-status-available { color: #198754; font-weight:600; }
+.room-status-occupied { color: #dc3545; font-weight:600; }
+
+/* Responsive tweaks: make cards stack nicely */
+@media (max-width: 768px) {
+    .user-dashboard-cards .col-md-3, .user-dashboard-cards .col-sm-6 { flex: 0 0 50%; max-width:50%; }
+}
+
+</style>
+{% endblock %}
+
+<!-- end of template -->

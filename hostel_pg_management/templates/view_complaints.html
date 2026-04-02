@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}My Complaints | HostelApp{% endblock %}
+{% block header %}Complaint Management{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)), url('{{ url_for('static', filename='images/complaints_bg.png') }}');{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Submit Complaint Form -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-0 h-100 glass-card">
+            <div class="card-header border-bottom-0 py-4">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2 text-primary"></i>File a Complaint</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('student.complaints') }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div class="mb-3">
+                        <label for="subject" class="form-label fw-semibold">Subject</label>
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="e.g., Plumbing Issue" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="complaint" class="form-label fw-semibold">Description</label>
+                        <textarea class="form-control" id="complaint" name="complaint" rows="5" placeholder="Please describe the issue in detail..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">
+                        <i class="bi bi-send me-2"></i> Submit Complaint
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complaints Table -->
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow-sm border-0 h-100 glass-card">
+            <div class="card-header border-bottom-0 py-4 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-list-task me-2 text-primary"></i>My Complaint History</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light bg-opacity-50">
+                            <tr>
+                                <th scope="col" class="ps-4">Date</th>
+                                <th scope="col">Subject / Details</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for complaint in complaints %}
+                            <tr>
+                                <td class="ps-4 text-muted small">{{ complaint.created_at[:10] if complaint.created_at else 'N/A' }}</td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ complaint.subject }}</div>
+                                    <div class="text-muted small text-truncate" style="max-width: 300px;">{{ complaint.complaint }}</div>
+                                </td>
+                                <td>
+                                    {% if complaint.status == 'Resolved' or complaint.status == 'Solved' %}
+                                            <span class="badge bg-success rounded-pill px-3 py-2">{{ 'Solved' if complaint.status == 'Solved' else 'Resolved' }}</span>
+                                    {% elif complaint.status == 'In Progress' %}
+                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">In Progress</span>
+                                    {% else %}
+                                        <span class="badge bg-danger rounded-pill px-3 py-2">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center py-5 text-muted">
+                                    <i class="bi bi-check2-circle fs-1 d-block mb-2 text-success opacity-50"></i>
+                                    You have no active or past complaints.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

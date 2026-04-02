@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Pay for Booking | Girls Hostel{% endblock %}
+{% block header %}Pay for Booking{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-lg border-0 mt-4">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Pay for Booking {{ booking.booking_id }}</h4>
+      </div>
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ booking.name }}</p>
+        <p><strong>Email:</strong> {{ booking.email }}</p>
+        <p><strong>Monthly Rent:</strong> Rs. {{ booking.price or 0 }}</p>
+        {% if payment_phone %}
+        <hr>
+        <p class="mb-2"><strong>PhonePe Number:</strong> <i class="bi bi-phone me-1"></i> {{ payment_phone }}</p>
+        {% if payment_qr %}
+        <div class="mb-3">
+            <img src="{{ payment_qr }}" alt="Payment QR" style="width:160px;height:160px;" />
+        </div>
+        {% endif %}
+        {% endif %}
+        <form method="post" action="{{ url_for('payment.pay_booking', booking_id=booking.booking_id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3">
+            <label class="form-label">Amount (Rs.)</label>
+            <input type="number" name="amount" class="form-control" placeholder="Enter amount to pay" value="{{ booking.price or 0 }}" required>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success">Pay Now</button>
+            <a href="{{ url_for('booking.booking_success', booking_id=booking.booking_id) }}" class="btn btn-secondary">Back</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

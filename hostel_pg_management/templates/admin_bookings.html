@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Bookings | HostelApp{% endblock %}
+{% block header %}Room Bookings{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)), url('{{ url_for('static', filename='images/rooms_bg.png') }}');{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0 glass-card">
+    <div class="card-header border-bottom-0 py-4 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-journal-check me-2 text-primary"></i>All Bookings</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light bg-opacity-50">
+                    <tr>
+                        <th scope="col" class="ps-4">Booking ID</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Rent Amount</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-dark">{{ booking.booking_id }}</td>
+                        <td class="text-muted small">{{ booking.created_at[:10] if booking.created_at else 'N/A' }}</td>
+                        <td class="fw-semibold">{{ booking.name }}</td>
+                        <td class="fw-bold">{{ booking.room_no or 'N/A' }}</td>
+                        <td class="text-muted small">{{ booking.ac_type }} - {{ booking.sharing_type }} Sharing</td>
+                        <td class="fw-bold">₹{{ booking.price }}</td>
+                        <td>
+                            {% if booking.status == 'Confirmed' %}
+                                <span class="badge bg-success rounded-pill px-3 py-2">Confirmed</span>
+                            {% elif booking.status == 'Rejected' %}
+                                <span class="badge bg-danger rounded-pill px-3 py-2">Rejected</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{{ url_for('booking.admin_booking_detail', booking_id=booking.id) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                                <form action="{{ url_for('booking.update_booking_status', booking_id=booking.id) }}" method="POST" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select form-select-sm" name="status">
+                                            <option value="Pending" {% if booking.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                            <option value="Confirmed" {% if booking.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                            <option value="Rejected" {% if booking.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                        </select>
+                                        <button class="btn btn-primary" type="submit">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2 text-black-50"></i>
+                            No bookings yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

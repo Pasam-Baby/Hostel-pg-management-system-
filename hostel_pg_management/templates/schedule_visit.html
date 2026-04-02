@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}Schedule Visit | HostelApp{% endblock %}
+{% block header %}Schedule a Visit{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('{{ url_for('static', filename='images/visit_requests_bg.png') }}'); background-position: center; background-size: cover;{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0 mt-4 glass-card form-validation-container">
+            <div class="card-header border-bottom-0 py-4 text-center">
+                <i class="bi bi-calendar-event text-primary mb-2 d-block fs-1"></i>
+                <h4 class="mb-0 fw-bold">Schedule a Hostel Visit</h4>
+                <p class="text-muted small mt-2">Come see our facilities before booking</p>
+                {% if session.get('student_id') %}
+                <div class="small text-muted mt-1">You are scheduling as <strong>{{ pre_name or session.get('student_name') }}</strong>{% if pre_room_no %} for room <strong>{{ pre_room_no }}</strong>{% endif %}.</div>
+                {% endif %}
+            </div>
+            
+            <div class="card-body p-4 p-md-5 pt-0">
+                <form action="{{ url_for('auth.schedule_visit') }}" method="POST" id="visitForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name" required value="{{ pre_name if pre_name is defined else '' }}">
+                        <label for="name"><i class="bi bi-person me-2"></i>Full Name</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="relation" name="relation" required>
+                            <option value="">Select Relation</option>
+                            <option value="Father">Father</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Brother">Brother</option>
+                            <option value="Sister">Sister</option>
+                        </select>
+                        <label for="relation"><i class="bi bi-people me-2"></i>Relation</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" required value="{{ pre_email if pre_email is defined else '' }}">
+                        <label for="email"><i class="bi bi-envelope me-2"></i>Email Address</label>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone" required value="{{ pre_phone if pre_phone is defined else '' }}">
+                        <label for="phone"><i class="bi bi-telephone me-2"></i>Phone Number</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="person_to_visit" name="person_to_visit" placeholder="Person to Visit" value="{{ pre_name if pre_name is defined else '' }}">
+                        <label for="person_to_visit"><i class="bi bi-person-check me-2"></i>Person to Visit (name)</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="for_room_id" name="for_room_id" placeholder="Room ID" value="{{ pre_room_no if pre_room_no is defined else '' }}">
+                        <label for="for_room_id"><i class="bi bi-door-open me-2"></i>Room ID</label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-floating mb-4">
+                                <input type="date" class="form-control" id="visit_date" name="visit_date" required min="{{ today_date }}">
+                                <label for="visit_date"><i class="bi bi-calendar me-2"></i>Date</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating mb-4">
+                                <input type="time" class="form-control" id="visit_time" name="visit_time" required>
+                                <label for="visit_time"><i class="bi bi-clock me-2"></i>Time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm" id="submitBtn">
+                        <span class="normal-text"><i class="bi bi-calendar-check me-2"></i>Confirm Visit</span>
+                        <span class="loading-text" style="display: none;"><span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Processing...</span>
+                    </button>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('home') }}" class="text-decoration-none text-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById('visitForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Form Validation UI safely
+        form.addEventListener('submit', function() {
+            if (form.checkValidity()) {
+                submitBtn.disabled = true;
+                submitBtn.querySelector('.normal-text').style.display = 'none';
+                submitBtn.querySelector('.loading-text').style.display = 'inline';
+            }
+        });
+    });
+</script>
+{% endblock %}

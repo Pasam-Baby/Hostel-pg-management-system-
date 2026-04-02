@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Food Menu | HostelApp{% endblock %}
+{% block header %}Weekly Food Menu{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0 glass-card">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">Weekly Food Menu (Sun - Sat)</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Day</th>
+                        <th>Breakfast</th>
+                        <th>Lunch</th>
+                        <th>Dinner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in menu %}
+                    <tr>
+                        <td>{{ item.day }}</td>
+                        <td>{{ item.breakfast or '-' }}</td>
+                        <td>{{ item.lunch or '-' }}</td>
+                        <td>{{ item.dinner or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

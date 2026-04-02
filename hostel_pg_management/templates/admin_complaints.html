@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% block title %}Complaints | HostelApp{% endblock %}
+{% block header %}User Complaints{% endblock %}
+{% block bg_class %}{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)), url('{{ url_for('static', filename='images/complaints_bg.png') }}');{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0 glass-card">
+    <div class="card-header border-bottom-0 py-4 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle me-2 text-warning"></i>All Complaints</h5>
+        <a href="{{ url_for('report.generate_report', report_type='complaints') }}" class="btn btn-sm btn-outline-danger border-0 bg-danger bg-opacity-10 text-danger fw-bold rounded-pill shadow-sm">
+            <i class="bi bi-file-pdf"></i> Export PDF
+        </a>
+    </div>
+    <div class="px-4 pb-3 pt-0">
+        <div class="alert alert-danger d-inline-block mb-3 d-flex align-items-center">
+            <div>
+                <strong>Emergency:</strong> Call <span class="fw-bold">{{ emergency_number }}</span> for immediate assistance.
+            </div>
+            {% if session.get('admin') %}
+            <div class="ms-3">
+                <button class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editEmergencyModal">Edit</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light bg-opacity-50">
+                    <tr>
+                        <th scope="col" class="ps-4">Date</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col" style="width: 30%;">Details</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for complaint in complaints %}
+                    <tr>
+                        <td class="ps-4 text-muted small">{{ complaint.created_at[:10] if complaint.created_at else 'N/A' }}</td>
+                        <td class="fw-bold">{{ complaint.name }}</td>
+                        <td class="fw-semibold">{{ complaint.subject }}</td>
+                        <td class="text-muted small">{{ complaint.complaint }}</td>
+                        <td>
+                            {% if complaint.status == 'Resolved' or complaint.status == 'Solved' %}
+                                <span class="badge bg-success rounded-pill px-3 py-2">{{ 'Solved' if complaint.status == 'Solved' else 'Resolved' }}</span>
+                            {% elif complaint.status == 'In Progress' %}
+                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2">In Progress</span>
+                            {% else %}
+                                <span class="badge bg-danger rounded-pill px-3 py-2">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <form action="{{ url_for('admin.update_complaint', id=complaint.id) }}" method="POST" class="d-inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <div class="input-group input-group-sm">
+                                    <select class="form-select form-select-sm" name="status">
+                                        <option value="Pending" {% if complaint.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                        <option value="In Progress" {% if complaint.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                        <option value="Resolved" {% if complaint.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                        <option value="Solved" {% if complaint.status == 'Solved' %}selected{% endif %}>Solved</option>
+                                    </select>
+                                    <button class="btn btn-primary" type="submit">Update</button>
+                                </div>
+                            </form>
+                            <button class="btn btn-outline-secondary btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#replyModal{{ complaint.id }}">
+                                <i class="bi bi-reply"></i> Reply
+                                {% if reply_counts and reply_counts.get(complaint.id) %}
+                                    <span class="badge bg-info ms-1">{{ reply_counts.get(complaint.id) }}</span>
+                                {% endif %}
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Reply Modal -->
+                    <div class="modal fade" id="replyModal{{ complaint.id }}" tabindex="-1" aria-labelledby="replyModalLabel{{ complaint.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="replyModalLabel{{ complaint.id }}">Reply to {{ complaint.name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="{{ url_for('admin.reply_complaint', complaint_id=complaint.id) }}" method="POST">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <div class="mb-3">
+                                            <label class="form-label">Message</label>
+                                            <textarea name="reply" class="form-control" rows="5" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Send Reply</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% if loop.last and session.get('admin') %}
+                    <!-- Edit Emergency Modal -->
+                    <div class="modal fade" id="editEmergencyModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form action="{{ url_for('admin.settings') }}" method="POST">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit Emergency Contact</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Emergency Number</label>
+                                            <input name="emergency_number" class="form-control" value="{{ emergency_number }}">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2 text-black-50"></i>
+                            No complaints have been submitted yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Booking Preview | Girls Hostel{% endblock %}
+{% block header %}Booking Preview{% endblock %}
+{% block page_bg_style %}background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('{{ url_for('static', filename='images/rooms_bg.png') }}'); background-position: center; background-size: cover;{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-lg border-0 mt-4 glass-card">
+            <div class="card-header border-bottom-0 py-4 text-center">
+                <h4 class="mb-0 fw-bold">Booking Preview - Room {{ room.room_no }}</h4>
+                <p class="text-muted small mt-2 mb-0">Please review the details before proceeding.</p>
+            </div>
+            <div class="card-body p-4 p-md-5 pt-0">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Room Number</label>
+                    <input type="text" class="form-control" value="{{ room.room_no }}" disabled>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col-6">
+                        <label class="form-label fw-semibold">Room Type</label>
+                        <input type="text" class="form-control" value="{{ room.ac_type }}" disabled>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-semibold">Sharing</label>
+                        <input type="text" class="form-control" value="{{ room.sharing_type }} Sharing" disabled>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Monthly Rent</label>
+                    <input type="text" class="form-control" value="₹{{ price }}" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Available Slots</label>
+                    <input type="text" class="form-control" value="{{ room.available_beds }}" disabled>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('booking.book_room') }}?room_id={{ room.id }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-credit-card-2-front me-2"></i>Proceed to Payment
+                    </a>
+                    <a href="{{ url_for('booking.available_rooms') }}" class="btn btn-outline-secondary">Back to Rooms</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

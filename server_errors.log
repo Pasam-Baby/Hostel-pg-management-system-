@@ -1,0 +1,223 @@
+
+--- admin.facilities DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 220, in facilities
+    facs = db.execute('SELECT * FROM facilities ORDER BY id').fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: facilities
+
+
+--- admin.food_menu DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 190, in food_menu
+    menu = db.execute('SELECT id, day, breakfast, lunch, dinner FROM food_menu ORDER BY id').fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: food_menu
+
+
+--- admin.food_menu DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 190, in food_menu
+    menu = db.execute('SELECT id, day, breakfast, lunch, dinner FROM food_menu ORDER BY id').fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: food_menu
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.complaints DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 487, in complaints
+    reply_rows = db.execute('SELECT complaint_id, COUNT(*) as cnt FROM complaint_replies GROUP BY complaint_id').fetchall()
+                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: complaint_replies
+
+
+--- admin.complaints DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 487, in complaints
+    reply_rows = db.execute('SELECT complaint_id, COUNT(*) as cnt FROM complaint_replies GROUP BY complaint_id').fetchall()
+                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: complaint_replies
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.facilities DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 220, in facilities
+    facs = db.execute('SELECT * FROM facilities ORDER BY id').fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: facilities
+
+
+--- admin.food_menu DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 190, in food_menu
+    menu = db.execute('SELECT id, day, breakfast, lunch, dinner FROM food_menu ORDER BY id').fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: food_menu
+
+
+--- admin.facilities DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 220, in facilities
+    facs = db.execute('SELECT * FROM facilities ORDER BY id').fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: facilities
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.food_menu DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 190, in food_menu
+    menu = db.execute('SELECT id, day, breakfast, lunch, dinner FROM food_menu ORDER BY id').fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: food_menu
+
+
+--- admin.facilities DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 220, in facilities
+    facs = db.execute('SELECT * FROM facilities ORDER BY id').fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: facilities
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.payments DB error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 442, in payments
+        payments_list = db.execute(
+                        ~~~~~~~~~~^
+        '''
+        ^^^
+    ...<3 lines>...
+        '''
+        ^^^
+    ).fetchall()
+    ^
+sqlite3.OperationalError: no such column: p.payment_month
+
+
+--- admin.api_update_room error ---
+Traceback (most recent call last):
+  File "C:\Users\hp\OneDrive\Desktop\hostel_pg_management (5)\hostel_pg_management\routes\admin.py", line 132, in api_update_room
+    return ({'success': True, 'room': dict(row)}, 200)
+                                      ~~~~^^^^^
+TypeError: 'NoneType' object is not iterable
+

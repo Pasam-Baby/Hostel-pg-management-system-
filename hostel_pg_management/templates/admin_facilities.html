@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Manage Facilities | Admin{% endblock %}
+{% block header %}Facilities{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="fw-bold">Add Facility</h5>
+                <form method="POST" action="{{ url_for('admin.facilities') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-2"><input class="form-control" name="name" placeholder="Facility name"></div>
+                    <div class="mb-2"><input class="form-control" name="description" placeholder="Short description"></div>
+                    <div class="text-end"><button class="btn btn-primary">Add</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="fw-bold">Existing Facilities</h5>
+                <ul class="list-group">
+                    {% for f in facilities %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-semibold">{{ f.name }}</div>
+                            <div class="small text-muted">{{ f.description }}</div>
+                        </div>
+                        <form method="POST" action="{{ url_for('admin.delete_facility', fac_id=f.id) }}" onsubmit="return confirm('Remove facility?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
