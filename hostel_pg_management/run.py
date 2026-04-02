@@ -28,6 +28,18 @@ if __name__ == '__main__':
             cur.execute("INSERT INTO admin (username, password) VALUES ('admin', ?)", (admin_hash,))
         conn.commit()
         conn.close()
+        # Ensure 'approved' column exists in 'students' table
+        try:
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+            cur.execute("PRAGMA table_info(students)")
+            cols = [r[1] for r in cur.fetchall()]
+            if 'approved' not in cols:
+                cur.execute("ALTER TABLE students ADD COLUMN approved INTEGER DEFAULT 0")
+                conn.commit()
+            conn.close()
+        except Exception:
+            pass
     except Exception:
         pass
 

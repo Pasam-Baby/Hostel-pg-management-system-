@@ -79,11 +79,11 @@ def student_login():
             if is_valid:
                 # Ensure account has been approved by admin
                 try:
-                    is_verified = int(student.get('is_verified', 0)) if hasattr(student, 'get') else int(student['is_verified'])
+                    is_approved = int(student.get('approved', 0)) if hasattr(student, 'get') else int(student['approved'])
                 except Exception:
-                    is_verified = 0
+                    is_approved = 0
 
-                if not is_verified:
+                if not is_approved:
                     flash("Account not yet approved by admin. Please wait for confirmation.", "warning")
                     return redirect("/student_login")
 
@@ -142,8 +142,8 @@ def student_register():
 
         hashed_password = generate_password_hash(password)
         db.execute(
-            "INSERT INTO students (name, email, password, phone, room_id, id_proof, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (name, email, hashed_password, phone, room_id, id_proof_path, 0)
+            "INSERT INTO students (name, email, password, phone, room_id, id_proof, is_verified, approved) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (name, email, hashed_password, phone, room_id, id_proof_path, 0, 0)
         )
 
         if room_id:
@@ -197,11 +197,11 @@ def google_auth():
         student = db.execute("SELECT * FROM students WHERE LOWER(email)=LOWER(?)", (email,)).fetchone()
         if student:
             try:
-                is_verified = int(student.get('is_verified', 0)) if hasattr(student, 'get') else int(student['is_verified'])
+                is_approved = int(student.get('approved', 0)) if hasattr(student, 'get') else int(student['approved'])
             except Exception:
-                is_verified = 0
+                is_approved = 0
 
-            if not is_verified:
+            if not is_approved:
                 flash(f"Account for {email} is not yet approved by administration.", "warning")
                 return redirect("/student_login")
 

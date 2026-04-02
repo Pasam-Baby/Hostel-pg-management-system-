@@ -61,7 +61,7 @@ def ensure_booking_user(booking, verified=False):
         except Exception:
             is_verified_val = 0
         if verified and not is_verified_val:
-            db.execute("UPDATE students SET is_verified = 1 WHERE id = ?", (user['id'],))
+            db.execute("UPDATE students SET is_verified = 1, approved = 1 WHERE id = ?", (user['id'],))
         # refresh user record
         user = db.execute("SELECT * FROM students WHERE id = ?", (user['id'],)).fetchone()
         return user, None
@@ -78,10 +78,10 @@ def ensure_booking_user(booking, verified=False):
     verified_flag = 1 if verified else 0
     db.execute(
         """
-        INSERT INTO students (name, email, password, phone, room_id, is_verified)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO students (name, email, password, phone, room_id, is_verified, approved)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
-        (booking['name'], booking['email'], password_hash, booking['phone'], booking['room_id'], verified_flag),
+        (booking['name'], booking['email'], password_hash, booking['phone'], booking['room_id'], verified_flag, verified_flag),
     )
     user = db.execute("SELECT * FROM students WHERE LOWER(email)=LOWER(?)", (booking['email'],)).fetchone()
     return user, temp_password
@@ -534,9 +534,9 @@ def admin_booking_action(booking_id):
             except Exception:
                 pass
 
-            db.execute('UPDATE bookings SET status = ? WHERE id = ?', ('Approved', booking_id))
+            db.execute('UPDATE bookings SET status = ? WHERE id = ?', ('Confirmed', booking_id))
             db.commit()
-            flash('Booking accepted and approved.', 'success')
+            flash('Booking accepted and resident approved.', 'success')
 
         elif action == 'reject':
             # Reject booking: free room slot
@@ -595,7 +595,7 @@ def update_booking_status(booking_id):
         return redirect(url_for('booking.admin_bookings'))
     
     old_status = booking['status']
-    if status == 'Approved' and booking['status'] != 'Approved':
+    if status == 'Confirmed' and booking['status'] != 'Confirmed':
         room = db.execute("SELECT * FROM rooms WHERE id = ?", (booking['room_id'],)).fetchone()
         if room:
             db.execute(
@@ -608,9 +608,9 @@ def update_booking_status(booking_id):
                 """,
                 (booking['room_id'],),
             )
-        # Ensure student account exists and mark as verified so they can login
+        # Ensure student account exists and mark as approved so they can login
         user, temp_password = ensure_booking_user(booking, verified=True)
-        add_notification('student', user['id'], f'Your booking {booking["booking_id"]} has been confirmed.', 'success')
+        add_notification('student', user['id'], f'Your booking {booking["booking_id"]} has been confirmed and approved.', 'success')
         email_html = (
             f"<h3>Booking Confirmed</h3>"
             f"<p>Dear {booking['name']}, your booking {booking['booking_id']} has been confirmed.</p>"

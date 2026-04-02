@@ -36,8 +36,18 @@ def create_app():
     with app.app_context():
         try:
             init_db()
+            # Ensure 'approved' column exists in 'students' table
+            import sqlite3
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+            cur.execute("PRAGMA table_info(students)")
+            cols = [r[1] for r in cur.fetchall()]
+            if 'approved' not in cols:
+                cur.execute("ALTER TABLE students ADD COLUMN approved INTEGER DEFAULT 0")
+                conn.commit()
+            conn.close()
         except Exception as e:
-            print("Warning: init_db failed:", e)
+            print("Warning: DB initialization/migration failed:", e)
 
     # Register Blueprints (use package-qualified imports)
     from hostel_pg_management.routes.auth import auth_bp

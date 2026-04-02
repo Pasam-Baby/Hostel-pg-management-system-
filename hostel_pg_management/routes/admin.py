@@ -421,7 +421,7 @@ def students():
     search_q = request.args.get('search', '')
     query = '''
         SELECT DISTINCT students.id, students.name, students.email, students.phone, students.room_id,
-               rooms.room_no, rooms.total_beds, rooms.ac_type, rooms.occupied, students.id_proof, students.is_verified
+               rooms.room_no, rooms.total_beds, rooms.ac_type, rooms.occupied, students.id_proof, students.is_verified, students.approved
         FROM students
         LEFT JOIN rooms ON students.room_id = rooms.id
         WHERE EXISTS (
@@ -502,7 +502,7 @@ def verify_payment(payment_id):
 @admin_bp.route('/verify_resident/<int:student_id>', methods=['POST'])
 def verify_resident(student_id):
     db = get_db()
-    db.execute('UPDATE students SET is_verified=1 WHERE id=?', (student_id,))
+    db.execute('UPDATE students SET is_verified=1, approved=1 WHERE id=?', (student_id,))
     db.execute(
         '''
         INSERT INTO id_verifications (student_id, id_proof_path, verification_status, verified_by, verified_at)
@@ -512,7 +512,16 @@ def verify_resident(student_id):
         (student_id,),
     )
     db.commit()
-    flash('Aadhar verified successfully.', 'success')
+    flash('Resident verified and approved successfully.', 'success')
+    return redirect('/admin/students')
+
+
+@admin_bp.route('/approve_resident/<int:student_id>', methods=['POST'])
+def approve_resident(student_id):
+    db = get_db()
+    db.execute('UPDATE students SET approved=1 WHERE id=?', (student_id,))
+    db.commit()
+    flash('Resident account approved.', 'success')
     return redirect('/admin/students')
 
 
