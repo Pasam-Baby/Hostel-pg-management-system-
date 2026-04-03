@@ -15,7 +15,9 @@
                         <i class="bi bi-people-fill fs-4"></i>
                     </div>
                 </div>
-
+                <h6 class="text-muted text-uppercase fw-bold small mb-1" style="letter-spacing: 0.5px;">Booked Rooms</h6>
+                <h2 class="fw-bold mb-0" id="bookedRoomsValue">0</h2>
+                <div class="small text-muted mt-2">currently occupied</div>
             </div>
         </div>
     </div>
@@ -28,7 +30,7 @@
                     </div>
                 </div>
                 <h6 class="text-muted text-uppercase fw-bold small mb-1" style="letter-spacing: 0.5px;">Available Rooms</h6>
-                <h2 class="fw-bold mb-0">{{ available_rooms or 0 }}</h2>
+                <h2 class="fw-bold mb-0" id="availableRoomsValue">{{ available_rooms or 0 }}</h2>
                 <div class="small text-muted mt-2">rooms with free beds</div>
             </div>
         </div>
@@ -140,19 +142,19 @@
     </div>
 </div>
 
-<div id="liveActivitySection" class="row g-4 mt-2 mb-4">
+<div id="recentActivitySection" class="row g-4 mt-2 mb-4">
     <div class="col-12">
         <div class="card shadow-sm border-0 glass-card">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="text-muted text-uppercase fw-bold small mb-0" style="letter-spacing: 1px;">Live Activity Trend</h6>
+                    <h6 class="text-muted text-uppercase fw-bold small mb-0" style="letter-spacing: 1px;">Recent Activity</h6>
                     <div class="d-flex align-items-center">
                         <span class="badge bg-success rounded-circle p-1 me-2" id="liveIndicator" style="width: 8px; height: 8px;"></span>
-                        <span class="small text-success fw-bold" style="font-size: 0.75rem;">LIVE FEED</span>
+                        <span class="small text-success fw-bold" style="font-size: 0.75rem;">AUTO UPDATE</span>
                     </div>
                 </div>
-                <div style="height: 100px;">
-                    <canvas id="liveActivityChart"></canvas>
+                <div style="height: 200px; overflow: hidden;" id="recentActivityContainer" class="d-flex flex-column gap-2 mt-2">
+                    <!-- Activities will go here -->
                 </div>
             </div>
         </div>
@@ -248,63 +250,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Safely Initialize Live Feed Chart
-    (function initLiveFeed() {
-        const liveCanvas = document.getElementById('liveActivityChart');
-        if (!liveCanvas) return;
+    // Safely Initialize Recent Activity Auto-Update
+    (function initRecentActivity() {
+        const bookedRoomsEl = document.getElementById('bookedRoomsValue');
+        const availableRoomsEl = document.getElementById('availableRoomsValue');
+        const activityContainer = document.getElementById('recentActivityContainer');
 
-        const startChart = (CanvasElement) => {
-            const ctx = CanvasElement.getContext('2d');
-            if (!ctx) return;
+        if (!activityContainer) return;
 
-            const lGrad = ctx.createLinearGradient(0, 0, 0, 100);
-            lGrad.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
-            lGrad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+        let totalRooms = 300;
+        let availableRooms = parseInt(availableRoomsEl ? availableRoomsEl.innerText : '0') || 55;
+        
+        const activityMessages = [
+            'Room 101 booked', 'Payment received via UPI', 'Complaint #402 submitted',
+            'Room 205 vacated', 'Maintenance resolved for Room 304', 'New student registered',
+            'Visitor request approved', 'Rent reminder sent', 'Room 112 booked'
+        ];
 
-            let labels = Array.from({length: 30}, () => '');
-            let dataArr = Array.from({length: 30}, () => Math.floor(Math.random() * 20) + 20);
+        const updateDashboard = () => {
+            // Update counts (slight random variation)
+            const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+            availableRooms = Math.max(0, Math.min(totalRooms, availableRooms + change));
+            if (availableRoomsEl) availableRoomsEl.innerText = availableRooms;
+            
+            if (bookedRoomsEl) {
+                // Booked = Total - Available
+                bookedRoomsEl.innerText = totalRooms - availableRooms;
+            }
 
-            const lChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: dataArr,
-                        borderColor: '#10b981',
-                        borderWidth: 2.5,
-                        fill: true,
-                        backgroundColor: lGrad,
-                        tension: 0.45,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                    scales: { x: { display: false }, y: { display: false, min: 0, max: 70 } },
-                    animation: { duration: 1000, easing: 'linear' }
-                }
+            // Create new activity item
+            const msg = activityMessages[Math.floor(Math.random() * activityMessages.length)];
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            const item = document.createElement('div');
+            item.className = 'd-flex justify-content-between align-items-center p-3 rounded bg-light bg-opacity-50 border-start border-4 border-success shadow-sm';
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-20px)';
+            item.style.transition = 'all 0.4s ease-out';
+            item.innerHTML = `<span class="small fw-bold text-dark">${msg}</span><span class="text-muted small fw-semibold" style="font-size: 0.75rem;">${time}</span>`;
+            
+            // Insert at top
+            activityContainer.insertBefore(item, activityContainer.firstChild);
+
+            // Trigger animation
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                });
             });
 
-            setInterval(() => {
-                if (lChart && lChart.data.datasets[0]) {
-                    const val = Math.floor(Math.random() * 30) + 15;
-                    lChart.data.datasets[0].data.push(val);
-                    lChart.data.datasets[0].data.shift();
-                    lChart.update();
-                }
-            }, 3500);
+            // Keep only 5 items visible
+            while (activityContainer.children.length > 5) {
+                activityContainer.removeChild(activityContainer.lastChild);
+            }
         };
 
-        if (typeof Chart === 'undefined') {
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
-            script.onload = () => startChart(liveCanvas);
-            document.head.appendChild(script);
-        } else {
-            startChart(liveCanvas);
-        }
+        // Run initial update immediately
+        updateDashboard();
+
+        // Update periodically
+        setInterval(updateDashboard, 4000);
     })();
 });
 </script>
