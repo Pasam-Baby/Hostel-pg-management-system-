@@ -164,19 +164,19 @@
     </div>
     
     <div class="col-lg-4">
-        <div class="card summary-card bg-dark bg-gradient text-white shadow-sm h-100 border-0 overflow-hidden">
+        <div class="card summary-card glass-card shadow-sm h-100 border-0 overflow-hidden">
             <div class="card-body d-flex flex-column justify-content-center p-4 position-relative">
                 <!-- Decorative element -->
-                <i class="bi bi-person-badge position-absolute text-white opacity-10" style="font-size: 10rem; bottom: -2rem; right: -2rem; transform: rotate(-15deg);"></i>
+                <i class="bi bi-person-badge position-absolute text-secondary opacity-10" style="font-size: 10rem; bottom: -2rem; right: -2rem; transform: rotate(-15deg);"></i>
                 
-                <h6 class="text-white-50 text-uppercase fw-bold mb-3 small" style="letter-spacing: 1px;">Resident Status</h6>
+                <h6 class="text-muted text-uppercase fw-bold mb-3 small" style="letter-spacing: 1px;">Resident Status</h6>
                 <div class="d-flex align-items-center mb-4">
                     <div class="bg-success rounded-circle me-3" style="width: 12px; height: 12px; animation: pulse 1.5s infinite; box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);"></div>
-                    <span class="fw-bold fs-5">Active & Verified</span>
+                    <span class="fw-bold fs-5 text-dark">Active & Verified</span>
                 </div>
-                <p class="small text-white-50 mb-4 lh-lg">Maintain your profile and keep your records updated for a seamless experience at your residence.</p>
+                <p class="small text-muted mb-4 lh-lg">Maintain your profile and keep your records updated for a seamless experience at your residence.</p>
                 <div class="mt-auto">
-                    <a href="{{ url_for('student.profile') }}" class="btn btn-outline-light w-100 py-2 fw-semibold">Update My Profile</a>
+                    <a href="{{ url_for('student.profile') }}" class="btn btn-outline-primary w-100 py-2 fw-semibold">Update My Profile</a>
                 </div>
             </div>
         </div>
@@ -207,62 +207,58 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Payment History Chart
+        // Payment History Chart variables (unused now due to live graph but kept for compatibility)
         let payDates = {{ payment_dates | tojson }} || [];
         let payAmounts = {{ payment_amounts | tojson }} || [];
-        
-        // Fallback for empty graph check (replace empty cards check with graph)
-        if (!payDates || payDates.length === 0) {
-            // Generate dummy data (last 6 months)
-            const d = new Date();
-            payDates = Array.from({length: 6}, (_, i) => {
-                let temp = new Date(d);
-                temp.setMonth(d.getMonth() - (5 - i));
-                return temp.toISOString().substring(0, 10);
-            });
-            payAmounts = [5500, 5500, 5000, 5500, 5500, 5500];
-        }
         
         if (document.getElementById('paymentHistoryChart')) {
             const payCtx = document.getElementById('paymentHistoryChart').getContext('2d');
             
             const gradient = payCtx.createLinearGradient(0, 0, 0, 250);
-            gradient.addColorStop(0, 'rgba(13, 110, 253, 0.15)');
+            gradient.addColorStop(0, 'rgba(13, 110, 253, 0.2)');
             gradient.addColorStop(1, 'rgba(13, 110, 253, 0)');
 
-            new Chart(payCtx, {
+            let liveLabels = Array.from({length: 30}, () => '');
+            let liveData = Array.from({length: 30}, () => Math.floor(Math.random() * 800) + 5000);
+
+            const liveChart = new Chart(payCtx, {
                 type: 'line',
                 data: {
-                    labels: payDates.map(d => d.substring(5, 10)), // Format dates for cleaner look
+                    labels: liveLabels,
                     datasets: [{
-                        label: 'Amount (₹)',
-                        data: payAmounts,
+                        label: 'Payment Activity',
+                        data: liveData,
                         borderColor: '#0d6efd',
-                        borderWidth: 3,
+                        borderWidth: 2.5,
                         backgroundColor: gradient,
                         fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#0d6efd',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
+                        tension: 0.45,
+                        pointRadius: 0,
+                        pointHoverRadius: 5
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    interaction: { intersect: false },
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
                     scales: { 
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: 'rgba(0,0,0,0.03)' },
-                            ticks: { callback: v => '₹' + v }
-                        },
-                        x: { grid: { display: false } }
+                        y: { display: false, min: 0 },
+                        x: { display: false }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'linear'
                     }
                 }
             });
+
+            setInterval(() => {
+                const nextVal = Math.floor(Math.random() * 800) + 5000;
+                liveChart.data.datasets[0].data.push(nextVal);
+                liveChart.data.datasets[0].data.shift();
+                liveChart.update();
+            }, 3500);
         }
 
         // Complaint Status Chart
