@@ -145,43 +145,111 @@
 <script>
 // Admin room edit AJAX handlers (included so admin edits on rooms page update in-place)
 document.addEventListener('DOMContentLoaded', function() {
+    
+    // Sync UI with localStorage on page load
+    document.querySelectorAll('[data-room-id]').forEach(function(el) {
+        const roomId = el.getAttribute('data-room-id');
+        if (!roomId) return;
+        const storedStr = localStorage.getItem('room_' + roomId);
+        if (storedStr) {
+            try {
+                const storedData = JSON.parse(storedStr);
+                const acEl = el.querySelector('.ac-type');
+                if (acEl && storedData.acType) {
+                    acEl.textContent = storedData.acType;
+                    acEl.className = 'badge ' + (storedData.acType === 'AC' ? 'bg-info' : 'bg-secondary') + ' rounded-pill px-3 py-2 ac-type';
+                }
+                const sharingEl = el.querySelector('.sharing-type');
+                if (sharingEl && storedData.sharingType) sharingEl.textContent = storedData.sharingType + ' Sharing';
+                const priceEl = el.querySelector('.price');
+                if (priceEl && storedData.price) priceEl.textContent = '₹' + storedData.price;
+            } catch(e) { console.error(e); }
+        }
+    });
+
+    // Form Subject logic
     document.querySelectorAll('.admin-edit-form').forEach(function(form) {
+        if (form.dataset.listenerAttached) return;
+        form.dataset.listenerAttached = 'true';
+
         form.addEventListener('submit', function(ev) {
             ev.preventDefault();
             const roomId = form.getAttribute('data-room-id');
             const fd = new FormData(form);
             const url = `/admin/api/update_room/${roomId}`;
+
+            // Save to localStorage immediately
+            const updatedRoomData = {
+                roomId: roomId,
+                sharingType: fd.get('sharing_type'),
+                acType: fd.get('ac_type'),
+                price: fd.get('price')
+            };
+            localStorage.setItem('room_' + roomId, JSON.stringify(updatedRoomData));
+
             fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.success) {
                         const room = data.room;
+                        // Update UI
                         document.querySelectorAll(`[data-room-id='${roomId}']`).forEach(function(el) {
                             const roomNoEl = el.querySelector('.room-no');
-                            if (roomNoEl) roomNoEl.textContent = room.room_no;
+                            if (roomNoEl && room.room_no) roomNoEl.textContent = room.room_no;
                             const acEl = el.querySelector('.ac-type');
                             if (acEl) {
-                                acEl.textContent = room.ac_type;
-                                acEl.className = 'badge ' + (room.ac_type == 'AC' ? 'bg-info' : 'bg-secondary') + ' rounded-pill px-3 py-2 ac-type';
+                                acEl.textContent = updatedRoomData.acType;
+                                acEl.className = 'badge ' + (updatedRoomData.acType === 'AC' ? 'bg-info' : 'bg-secondary') + ' rounded-pill px-3 py-2 ac-type';
                             }
                             const sharingEl = el.querySelector('.sharing-type');
-                            if (sharingEl) sharingEl.textContent = room.sharing_type + ' Sharing';
+                            if (sharingEl) sharingEl.textContent = updatedRoomData.sharingType + ' Sharing';
                             const priceEl = el.querySelector('.price');
-                            if (priceEl) priceEl.textContent = '₹' + room.price;
+                            if (priceEl) priceEl.textContent = '₹' + updatedRoomData.price;
                             const bedsEl = el.querySelector('.available-beds');
-                            if (bedsEl) bedsEl.textContent = room.available_beds;
+                            if (bedsEl && room.available_beds !== undefined) bedsEl.textContent = room.available_beds;
                         });
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('adminEditModal' + roomId));
-                        if (modal) modal.hide();
+                        
+                        // Reliably close modal & clean up backdrops
+                        const modalEl = document.getElementById('adminEditModal' + roomId);
+                        if (modalEl) {
+                            const modal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
+                            if (modal) modal.hide();
+                        }
+                        
+                        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+
                         const alertBox = document.createElement('div');
                         alertBox.className = 'alert alert-success mt-3';
                         alertBox.textContent = 'Room updated successfully.';
-                        document.querySelector('.container-fluid').prepend(alertBox);
-                        setTimeout(() => alertBox.remove(), 3000);
+                        const container = document.querySelector('.container-fluid');
+                        if (container) {
+                            container.prepend(alertBox);
+                            setTimeout(() => alertBox.remove(), 3000);
+                        }
                     } else {
                         alert('Failed to update room: ' + (data.error || 'Unknown'));
                     }
                 }).catch(err => { console.error(err); alert('Error updating room.'); });
+        });
+    });
+
+    // Fix for Stuck Close buttons
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(btn) {
+        if (btn.dataset.listenerAttached) return;
+        btn.dataset.listenerAttached = 'true';
+        btn.addEventListener('click', function() {
+            const modalEl = btn.closest('.modal');
+            if (modalEl) {
+                const modal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
+                if (modal) modal.hide();
+            }
+            document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
         });
     });
 
@@ -200,14 +268,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         const alertBox = document.createElement('div');
                         alertBox.className = 'alert alert-success mt-3';
                         alertBox.textContent = 'Room deleted.';
-                        document.querySelector('.container-fluid').prepend(alertBox);
-                        setTimeout(() => alertBox.remove(), 3000);
+                        const container = document.querySelector('.container-fluid');
+                        if (container) {
+                            container.prepend(alertBox);
+                            setTimeout(() => alertBox.remove(), 3000);
+                        }
                     } else {
                         alert('Failed to delete room: ' + (data.error || 'Unknown'));
                     }
                 }).catch(err => { console.error(err); alert('Error deleting room.'); });
         });
     });
+
 });
 </script>
 {% endblock %}
