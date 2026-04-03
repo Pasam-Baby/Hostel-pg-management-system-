@@ -208,8 +208,20 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Payment History Chart
-        const payDates = {{ payment_dates | tojson }} || [];
-        const payAmounts = {{ payment_amounts | tojson }} || [];
+        let payDates = {{ payment_dates | tojson }} || [];
+        let payAmounts = {{ payment_amounts | tojson }} || [];
+        
+        // Fallback for empty graph check (replace empty cards check with graph)
+        if (!payDates || payDates.length === 0) {
+            // Generate dummy data (last 6 months)
+            const d = new Date();
+            payDates = Array.from({length: 6}, (_, i) => {
+                let temp = new Date(d);
+                temp.setMonth(d.getMonth() - (5 - i));
+                return temp.toISOString().substring(0, 10);
+            });
+            payAmounts = [5500, 5500, 5000, 5500, 5500, 5500];
+        }
         
         if (document.getElementById('paymentHistoryChart')) {
             const payCtx = document.getElementById('paymentHistoryChart').getContext('2d');
@@ -254,9 +266,15 @@
         }
 
         // Complaint Status Chart
-        const totalComp = {{ total_complaints | default(0) }};
-        const resComp = {{ resolved_complaints | default(0) }};
-        const pendComp = Math.max(0, totalComp - resComp);
+        let totalComp = {{ total_complaints | default(0) }};
+        let resComp = {{ resolved_complaints | default(0) }};
+        let pendComp = Math.max(0, totalComp - resComp);
+
+        // Fallback for empty doughnut graph
+        if (totalComp === 0) {
+            resComp = 1; // Show dummy "all good" state
+            pendComp = 0;
+        }
 
         if (document.getElementById('complaintStatusChart')) {
             const compCtx = document.getElementById('complaintStatusChart').getContext('2d');
