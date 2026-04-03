@@ -315,33 +315,28 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             localStorage.setItem('room_' + roomId, JSON.stringify(updatedRoomData));
 
-            fetch(`/admin/api/update_room/${roomId}`, { method: 'POST', body: fd, credentials: 'same-origin' })
-                .then(r => r.json()).then(data => {
-                    if (data && data.success) {
-                        const room = data.room;
-                        // Update UI dynamically
-                        document.querySelectorAll(`[data-room-id='${roomId}']`).forEach(function(el) {
-                            const roomNoEl = el.querySelector('.room-no'); if (roomNoEl && room.room_no) roomNoEl.textContent = 'Room ' + room.room_no;
-                            const acEl = el.querySelector('.ac-type'); if (acEl) acEl.textContent = updatedRoomData.acType;
-                            const sharingEl = el.querySelector('.sharing-type'); if (sharingEl) sharingEl.textContent = updatedRoomData.sharingType;
-                            const priceEl = el.querySelector('.price'); if (priceEl) priceEl.textContent = '₹' + updatedRoomData.price;
-                            const bedsEl = el.querySelector('.available-beds'); if (bedsEl && room.available_beds !== undefined) bedsEl.textContent = room.available_beds;
-                        });
-                        
-                        // Reliably close modal & clean up backdrops
-                        const modalEl = document.getElementById('adminEditModal' + roomId);
-                        if (modalEl) {
-                            const modal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
-                            if (modal) modal.hide();
-                        }
-                        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = '';
-                        document.body.style.paddingRight = '';
+            fetch(`/admin/edit_room/${roomId}`, { method: 'POST', body: fd, credentials: 'same-origin' })
+                .then(res => {
+                    if (!res.ok) throw new Error("Server rejected update");
 
-                    } else {
-                        alert('Failed to update room: ' + (data.error || 'Unknown error'));
+                    // Update UI dynamically
+                    document.querySelectorAll(`[data-room-id='${roomId}']`).forEach(function(el) {
+                        const acEl = el.querySelector('.ac-type'); if (acEl) acEl.textContent = updatedRoomData.acType;
+                        const sharingEl = el.querySelector('.sharing-type'); if (sharingEl) sharingEl.textContent = updatedRoomData.sharingType;
+                        const priceEl = el.querySelector('.price'); if (priceEl) priceEl.textContent = '₹' + updatedRoomData.price;
+                    });
+                    
+                    // Reliably close modal & clean up backdrops
+                    const modalEl = document.getElementById('adminEditModal' + roomId);
+                    if (modalEl) {
+                        const modal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
+                        if (modal) modal.hide();
                     }
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+
                 }).catch(e => { console.error(e); alert('Error updating room'); });
         });
     });

@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ev.preventDefault();
             const roomId = form.getAttribute('data-room-id');
             const fd = new FormData(form);
-            const url = `/admin/api/update_room/${roomId}`;
+            const url = `/admin/edit_room/${roomId}`;
 
             // Save to localStorage immediately
             const updatedRoomData = {
@@ -188,49 +188,41 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('room_' + roomId, JSON.stringify(updatedRoomData));
 
             fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' })
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.success) {
-                        const room = data.room;
-                        // Update UI
-                        document.querySelectorAll(`[data-room-id='${roomId}']`).forEach(function(el) {
-                            const roomNoEl = el.querySelector('.room-no');
-                            if (roomNoEl && room.room_no) roomNoEl.textContent = room.room_no;
-                            const acEl = el.querySelector('.ac-type');
-                            if (acEl) {
-                                acEl.textContent = updatedRoomData.acType;
-                                acEl.className = 'badge ' + (updatedRoomData.acType === 'AC' ? 'bg-info' : 'bg-secondary') + ' rounded-pill px-3 py-2 ac-type';
-                            }
-                            const sharingEl = el.querySelector('.sharing-type');
-                            if (sharingEl) sharingEl.textContent = updatedRoomData.sharingType + ' Sharing';
-                            const priceEl = el.querySelector('.price');
-                            if (priceEl) priceEl.textContent = '₹' + updatedRoomData.price;
-                            const bedsEl = el.querySelector('.available-beds');
-                            if (bedsEl && room.available_beds !== undefined) bedsEl.textContent = room.available_beds;
-                        });
-                        
-                        // Reliably close modal & clean up backdrops
-                        const modalEl = document.getElementById('adminEditModal' + roomId);
-                        if (modalEl) {
-                            const modal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
-                            if (modal) modal.hide();
+                .then(res => {
+                    if (!res.ok) throw new Error("Server rejected update");
+                    
+                    // Update UI
+                    document.querySelectorAll(`[data-room-id='${roomId}']`).forEach(function(el) {
+                        const acEl = el.querySelector('.ac-type');
+                        if (acEl) {
+                            acEl.textContent = updatedRoomData.acType;
+                            acEl.className = 'badge ' + (updatedRoomData.acType === 'AC' ? 'bg-info' : 'bg-secondary') + ' rounded-pill px-3 py-2 ac-type';
                         }
-                        
-                        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = '';
-                        document.body.style.paddingRight = '';
+                        const sharingEl = el.querySelector('.sharing-type');
+                        if (sharingEl) sharingEl.textContent = updatedRoomData.sharingType + ' Sharing';
+                        const priceEl = el.querySelector('.price');
+                        if (priceEl) priceEl.textContent = '₹' + updatedRoomData.price;
+                    });
+                    
+                    // Reliably close modal & clean up backdrops
+                    const modalEl = document.getElementById('adminEditModal' + roomId);
+                    if (modalEl) {
+                        const modal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
+                        if (modal) modal.hide();
+                    }
+                    
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
 
-                        const alertBox = document.createElement('div');
-                        alertBox.className = 'alert alert-success mt-3';
-                        alertBox.textContent = 'Room updated successfully.';
-                        const container = document.querySelector('.container-fluid');
-                        if (container) {
-                            container.prepend(alertBox);
-                            setTimeout(() => alertBox.remove(), 3000);
-                        }
-                    } else {
-                        alert('Failed to update room: ' + (data.error || 'Unknown'));
+                    const alertBox = document.createElement('div');
+                    alertBox.className = 'alert alert-success mt-3';
+                    alertBox.textContent = 'Room updated successfully.';
+                    const container = document.querySelector('.container-fluid');
+                    if (container) {
+                        container.prepend(alertBox);
+                        setTimeout(() => alertBox.remove(), 3000);
                     }
                 }).catch(err => { console.error(err); alert('Error updating room.'); });
         });
