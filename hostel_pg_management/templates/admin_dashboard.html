@@ -16,8 +16,8 @@
                     </div>
                 </div>
                 <h6 class="text-muted text-uppercase fw-bold small mb-1" style="letter-spacing: 0.5px;">Booked Rooms</h6>
-                <h2 class="fw-bold mb-0" id="bookedRoomsValue">0</h2>
-                <div class="small text-muted mt-2">currently occupied</div>
+                <h2 class="fw-bold mb-0">{{ total_occupied or 0 }}</h2>
+                <div class="small text-muted mt-2">beds currently occupied</div>
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <h6 class="text-muted text-uppercase fw-bold small mb-1" style="letter-spacing: 0.5px;">Available Rooms</h6>
-                <h2 class="fw-bold mb-0" id="availableRoomsValue">{{ available_rooms or 0 }}</h2>
+                <h2 class="fw-bold mb-0">{{ available_rooms or 0 }}</h2>
                 <div class="small text-muted mt-2">rooms with free beds</div>
             </div>
         </div>
@@ -142,35 +142,12 @@
     </div>
 </div>
 
-<div id="recentActivitySection" class="row g-4 mt-2 mb-4">
-    <div class="col-12">
-        <div class="card shadow-sm border-0 glass-card">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="text-muted text-uppercase fw-bold small mb-0" style="letter-spacing: 1px;">Recent Activity</h6>
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-success rounded-circle p-1 me-2" id="liveIndicator" style="width: 8px; height: 8px;"></span>
-                        <span class="small text-success fw-bold" style="font-size: 0.75rem;">AUTO UPDATE</span>
-                    </div>
-                </div>
-                <div style="height: 200px; overflow: hidden;" id="recentActivityContainer" class="d-flex flex-column gap-2 mt-2">
-                    <!-- Activities will go here -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <style>
     .transition-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .transition-hover:hover { transform: translateY(-5px); box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important; }
     .dashboard-stats h2 { letter-spacing: -1px; }
-    @keyframes pulse-live {
-        0% { transform: scale(0.95); opacity: 0.7; }
-        50% { transform: scale(1.2); opacity: 1; }
-        100% { transform: scale(0.95); opacity: 0.7; }
-    }
-    #liveIndicator { animation: pulse-live 2s infinite; }
 </style>
 {% endblock %}
 
@@ -250,68 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Safely Initialize Recent Activity Auto-Update
-    (function initRecentActivity() {
-        const bookedRoomsEl = document.getElementById('bookedRoomsValue');
-        const availableRoomsEl = document.getElementById('availableRoomsValue');
-        const activityContainer = document.getElementById('recentActivityContainer');
-
-        if (!activityContainer) return;
-
-        let totalRooms = 300;
-        let availableRooms = parseInt(availableRoomsEl ? availableRoomsEl.innerText : '0') || 55;
-        
-        const activityMessages = [
-            'Room 101 booked', 'Payment received via UPI', 'Complaint #402 submitted',
-            'Room 205 vacated', 'Maintenance resolved for Room 304', 'New student registered',
-            'Visitor request approved', 'Rent reminder sent', 'Room 112 booked'
-        ];
-
-        const updateDashboard = () => {
-            // Update counts (slight random variation)
-            const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
-            availableRooms = Math.max(0, Math.min(totalRooms, availableRooms + change));
-            if (availableRoomsEl) availableRoomsEl.innerText = availableRooms;
-            
-            if (bookedRoomsEl) {
-                // Booked = Total - Available
-                bookedRoomsEl.innerText = totalRooms - availableRooms;
-            }
-
-            // Create new activity item
-            const msg = activityMessages[Math.floor(Math.random() * activityMessages.length)];
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            
-            const item = document.createElement('div');
-            item.className = 'd-flex justify-content-between align-items-center p-3 rounded bg-light bg-opacity-50 border-start border-4 border-success shadow-sm';
-            item.style.opacity = '0';
-            item.style.transform = 'translateX(-20px)';
-            item.style.transition = 'all 0.4s ease-out';
-            item.innerHTML = `<span class="small fw-bold text-dark">${msg}</span><span class="text-muted small fw-semibold" style="font-size: 0.75rem;">${time}</span>`;
-            
-            // Insert at top
-            activityContainer.insertBefore(item, activityContainer.firstChild);
-
-            // Trigger animation
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateX(0)';
-                });
-            });
-
-            // Keep only 5 items visible
-            while (activityContainer.children.length > 5) {
-                activityContainer.removeChild(activityContainer.lastChild);
-            }
-        };
-
-        // Run initial update immediately
-        updateDashboard();
-
-        // Update periodically
-        setInterval(updateDashboard, 4000);
-    })();
 });
 </script>
 {% endblock %}
