@@ -208,8 +208,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Payment History Chart variables (unused now due to live graph but kept for compatibility)
-        let payDates = {{ payment_dates | tojson }} || [];
-        let payAmounts = {{ payment_amounts | tojson }} || [];
+        let payDates = JSON.parse('{{ payment_dates | tojson | safe }}') || [];
+        let payAmounts = JSON.parse('{{ payment_amounts | tojson | safe }}') || [];
         
         if (document.getElementById('paymentHistoryChart')) {
             const payCtx = document.getElementById('paymentHistoryChart').getContext('2d');
@@ -262,8 +262,8 @@
         }
 
         // Complaint Status Chart
-        let totalComp = {{ total_complaints | default(0) }};
-        let resComp = {{ resolved_complaints | default(0) }};
+        let totalComp = parseInt("{{ total_complaints | default(0) }}") || 0;
+        let resComp = parseInt("{{ resolved_complaints | default(0) }}") || 0;
         let pendComp = Math.max(0, totalComp - resComp);
 
         // Fallback for empty doughnut graph
@@ -319,4 +319,3 @@
     });
 </script>
 {% endblock %}
-late -->

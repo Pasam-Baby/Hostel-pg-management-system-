@@ -211,8 +211,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3500);
 
     const occCtx = document.getElementById('occupancyChart').getContext('2d');
-    const occupied = {{ total_occupied or 0 }};
-    const availableSeats = {{ available_seats or 0 }};
+    const occupied = parseInt("{{ total_occupied or 0 }}") || 0;
+    const availableSeats = parseInt("{{ available_seats or 0 }}") || 0;
     
     new Chart(occCtx, {
         type: 'doughnut',
