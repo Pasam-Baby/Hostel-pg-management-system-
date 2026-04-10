@@ -10,6 +10,7 @@ from reportlab.pdfgen import canvas
 from hostel_pg_management.database.db import get_db
 # Import ensure_booking_user to create/lookup student for booking payments
 from hostel_pg_management.routes.booking import ensure_booking_user
+from hostel_pg_management.utils.sms import send_sms
 
 payment_bp = Blueprint('payment', __name__)
 
@@ -223,6 +224,12 @@ def make_payment():
         db.commit()
     except Exception:
         pass
+        
+    try:
+        if student and 'phone' in student and student['phone']:
+            send_sms(student['phone'], f'Payment of Rs. {amount + late_fee} successful for {payment_month}')
+    except Exception:
+        pass
 
     flash(f'Payment of Rs. {amount + late_fee} successful for {payment_month}', 'success')
     return redirect(url_for('payment.payment_dashboard'))
@@ -337,6 +344,12 @@ def pay_booking(booking_id):
         try:
             add_notification(db, 'student', student_id, f'Payment of Rs. {amount + late_fee} received for booking {booking_id}', 'success')
             db.commit()
+        except Exception:
+            pass
+            
+        try:
+            if booking and 'phone' in booking and booking['phone']:
+                send_sms(booking['phone'], f'Payment of Rs. {amount + late_fee} successful for booking {booking_id}')
         except Exception:
             pass
 
