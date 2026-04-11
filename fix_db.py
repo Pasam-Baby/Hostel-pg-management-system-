@@ -50,6 +50,7 @@ def fix():
     ensure_column(cur, "students", "room_id", "INTEGER")
     ensure_column(cur, "students", "id_proof", "TEXT")
     ensure_column(cur, "students", "is_verified", "INTEGER DEFAULT 0")
+    ensure_column(cur, "students", "approved", "INTEGER DEFAULT 0")
 
     # Ensure missing columns in rooms
     ensure_column(cur, "rooms", "category", "TEXT DEFAULT 'Comfort'")
