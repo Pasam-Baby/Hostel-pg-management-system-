@@ -183,7 +183,7 @@
                 </div>
             </nav>
 
-            <div class="container-fluid px-4 py-4 page-background {% block bg_class %}{% endblock %} min-vh-100" style="{% block page_bg_style %}{% endblock %}">
+            <div class="container-fluid px-4 py-4 page-background {% block bg_class %}{% endblock %} min-vh-100" style="{% block page_bg_style %}/* default */{% endblock %}">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
